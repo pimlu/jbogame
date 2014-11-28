@@ -1,0 +1,8 @@
+var config = {}
+config.web={};
+config.game={};
+config.web.host=true;
+config.web.port=8080;
+config.game.worlds={};
+config.game.worlds[1]=['mix',8081];
+module.exports = config;

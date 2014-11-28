@@ -1,0 +1,13 @@
+{
+  "name": "zdelu",
+  "version": "0.1.0",
+  "description": "kelci",
+  "author": "pimlu",
+  "dependencies": {
+    "express": "^4.10.4"
+  },
+  "scripts": {
+    "test": "echo test",
+    "start": "node app.js"
+  }
+}

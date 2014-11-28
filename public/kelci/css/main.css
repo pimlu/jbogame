@@ -1,0 +1,14 @@
+html.full, html.full body{
+  height:100%;
+}
+html.full body {
+  overflow:hidden;
+}
+html.full * {
+  margin:0;
+  padding:0;
+}
+canvas.game {
+  width:100% !important;
+  height:100% !important;
+}
