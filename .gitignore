@@ -1,6 +1,10 @@
-/build
 /node_modules
 .DS_Store
 *.log
 config.js
 /public/kelci/js/lib
+*.pem
+*.csr
+*.crt
+*.key
+*.key.org
