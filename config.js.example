@@ -25,8 +25,9 @@ config.knex={
   }
 };
 // stores state locally, don't use this in production
-config.brutestore=require('express-brute').MemoryStore();
-config.bruteopt={
+var ExpressBrute=require('express-brute'),
+  store=new (ExpressBrute.MemoryStore)();
+config.brute=new ExpressBrute(store,{
   maxWait:600000//10m
-};
+});
 module.exports = config;
