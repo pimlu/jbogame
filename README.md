@@ -10,5 +10,5 @@ The aim of this project is to create an online multiplayer browser game that wil
   * install postgres
   * set up cert
   * set up config.js
-  * `npm install`
+  * `sudo npm install`
   * `bower install jquery threejs`

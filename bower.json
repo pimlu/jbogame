@@ -1,0 +1,17 @@
+{
+  "name": "zdelu",
+  "version": "0.1.0",
+  "authors": [
+    "pimlu"
+  ],
+  "description": "kelci",
+  "main": "app.js",
+  "moduleType": [
+    "node"
+  ],
+  "private": true,
+  "dependencies": {
+    "jquery": "~2.1.1",
+    "threejs": "*"
+  }
+}
