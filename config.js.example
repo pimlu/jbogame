@@ -23,5 +23,10 @@ config.knex={
     password:'your_database_password',
     database:'jbogame'
   }
-}
+};
+// stores state locally, don't use this in production
+config.brutestore=require('express-brute').MemoryStore();
+config.bruteopt={
+  maxWait:600000//10m
+};
 module.exports = config;

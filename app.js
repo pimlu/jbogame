@@ -6,10 +6,11 @@ var config=require('./config.js'),
   bodyparser=require('body-parser');
   path=require('path'),
   knex=require('knex')(config.knex),
+  brute=config.brute,
   bcrypt=require('bcrypt');
 var app = express();
 
-function forcehttps(req, res, next){
+function forcehttps(req,res,next) {
   if(req.secure) {
     return next();
   }
@@ -18,7 +19,7 @@ function forcehttps(req, res, next){
     +req.url);
 };
 
-require('./dbcheck.js')(knex).then(function () {
+require('./dbcheck.js')(knex).then(function() {
   //runs after tables have been checked
   console.log('setting up express...');
 
@@ -27,10 +28,11 @@ require('./dbcheck.js')(knex).then(function () {
   app.use(bodyparser.urlencoded({extended:true}));
   app.use(bodyparser.json());
   //set up routes
-  app.use(express.static(path.join(__dirname, 'public')));
-  app.use(express.static(path.join(__dirname, 'shared')));
+  app.use(express.static(path.join(__dirname,'public')));
+  app.use(express.static(path.join(__dirname,'shared')));
   app.use('/js/lib',express.static(path.join(__dirname,'public/kelci/js/lib')));
-  app.post('/register', require('./register.js')(knex));
+  app.post('/register',require('./register.js')(knex));
+  app.post('/changepass',brute.prevent,require('./changepass.js')(knex));
   //listen on both ports
   http.createServer(app).listen(config.web.port);
   https.createServer(config.web.https,app).listen(config.web.ports);

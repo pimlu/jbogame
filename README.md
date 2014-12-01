@@ -1,12 +1,14 @@
 la zdelu
-=======
+========
 
-#### Online browser game ####
+#### Online browser game
 
 The aim of this project is to create an online multiplayer browser game that will incorporate Lojban.
 
-### Installation ###
+### Installation
 
   * install postgres
   * set up cert
   * set up config.js
+  * `npm install`
+  * `bower install jquery threejs`

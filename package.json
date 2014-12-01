@@ -8,6 +8,7 @@
     "bluebird": "^2.3.11",
     "body-parser": "^1.9.3",
     "express": "^4.10.4",
+    "express-brute": "^0.5.1",
     "knex": "^0.7.3",
     "lodash": "^2.4.1",
     "pg": "^4.0.0"

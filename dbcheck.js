@@ -9,9 +9,9 @@ module.exports=function(knex) {
         t.increments('id').primary();
         t.string('name',16);
         t.string('pass',60);
-        t.dateTime('created').defaultTo(knex.raw('now()'));
-        t.dateTime('changedpass').defaultTo(knex.raw('now()'));
-        t.dateTime('lastplayed').defaultTo(knex.raw('now()'));
+        t.timestamp('created').defaultTo(knex.raw('now()'));
+        t.timestamp('changedpass');
+        t.timestamp('lastplayed');
         t.specificType('ip','inet');
       });
     }
