@@ -10,4 +10,4 @@ The aim of this project is to create an online multiplayer browser game that wil
   * install postgres
   * set up cert
   * set up config.js
-  * `sudo ./setup.sh`
+  * `sudo ./setup.sh -ipd jbogame -as 127.0.0.1`

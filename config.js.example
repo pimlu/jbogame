@@ -7,11 +7,8 @@ config.web.host=true;
 config.web.port=8080;
 config.web.ports=8443;
 config.web.https={
-  key: fs.readFileSync('./https/server.key'),
-  cert: fs.readFileSync('./https/server.crt'),
-  ca: fs.readFileSync('./https/ca.crt'),
-  requestCert: true,
-  rejectUnauthorized: false
+  key: fs.readFileSync('./https/zdelu.key'),
+  cert: fs.readFileSync('./https/zdelu.crt')
 };
 config.game.worlds={};
 config.game.worlds[1]=['mix',8081];
@@ -19,8 +16,7 @@ config.knex={
   client:'pg',
   connection: {
     host:'127.0.0.1',
-    user:'your_database_user',
-    password:'your_database_password',
+    user:'postgres',
     database:'jbogame'
   }
 };
