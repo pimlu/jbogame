@@ -35,12 +35,11 @@ while getopts ":hipd:as:" opt; do case $opt in
       rm -f node-latest.tar.gz
       cd node-v*
       ./configure
-      CXX="g++ -Wno-unused-local-typedefs" make -j2
+      CXX="g++ -Wno-unused-local-typedefs" make -j`nproc`
       CXX="g++ -Wno-unused-local-typedefs" make install
       cd /tmp
       rm -rf /tmp/node-v*
-      npm update -g npm
-      npm update -g n node-debug bower
+      hash bower 2>/dev/null || npm install -g n node-debug bower
     fi
 
     cd $DIR
@@ -75,9 +74,15 @@ host all all ::1/128 trust" >> $HBA
     export PASSPHRASE=$(head -c 500 /dev/urandom | tr -dc a-z0-9A-Z | head -c 128; echo)
     trap 'unset PASSPHRASE' EXIT
 
-    subj="/C=JB/ST=Lojbanistan/O=la zdelu/localityName=.irci/commonName=$DOMAIN\
-    /organizationalUnitName=selkei/emailAddress=pimlu@users.noreply.github.com"
-
+    subj="
+C=JB
+ST=Lojbanistan
+O=la zdelu
+localityName=.irci
+commonName=$DOMAIN
+organizationalUnitName=selkei
+emailAddress=pimlu@users.noreply.github.com"
+    
     # Generate the server private key
     openssl genrsa -des3 -out $FILE.key -passout env:PASSPHRASE 2048
 
@@ -97,7 +102,7 @@ host all all ::1/128 trust" >> $HBA
 
     # Generate the cert (good for 10 years)
     openssl x509 -req -days 3650 -in $FILE.csr -signkey $FILE.key -out $FILE.crt
-    echo success
+    echo successfully created self signed cert
     ;;
   \?)
     echo "  invalid flag: -$OPTARG"
