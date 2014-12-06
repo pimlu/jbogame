@@ -17,7 +17,8 @@ function forcehttps(req,res,next) {
   res.redirect('https://'+req.hostname
     +(config.web.ports===443?'':':'+config.web.ports)
     +req.url);
-};
+}
+var dnjoin=path.join.bind(path,__dirname);
 
 require('./dbcheck.js')(knex).then(function() {
   //runs after tables have been checked
@@ -28,9 +29,15 @@ require('./dbcheck.js')(knex).then(function() {
   app.use(bodyparser.urlencoded({extended:true}));
   app.use(bodyparser.json());
   //set up routes
-  app.use(express.static(path.join(__dirname,'public')));
-  app.use(express.static(path.join(__dirname,'shared')));
-  app.use('/js/lib',express.static(path.join(__dirname,'public/kelci/js/lib')));
+  app.use(express.static(dnjoin('public')));
+  app.use(express.static(dnjoin('shared')));
+  if(config.debug) {
+    console.log('lols');
+    app.use('/debug',express.static(dnjoin('debug')));
+    app.use('/debug/js/lib',express.static(dnjoin('bower_components')));
+  }
+  app.use('/js/lib',express.static(dnjoin('bower_components')));
+  app.use('/kelci/js/lib',express.static(dnjoin('bower_components')));
   app.post('/register',require('./register.js')(knex));
   app.post('/changepass',brute.prevent,require('./changepass.js')(knex));
   //listen on both ports

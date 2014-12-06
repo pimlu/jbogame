@@ -2,7 +2,7 @@
 .DS_Store
 *.log
 config.js
-/public/kelci/js/lib
+/bower_components
 *.pem
 *.csr
 *.crt

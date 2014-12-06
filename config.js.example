@@ -1,6 +1,7 @@
 module.exports = config;
 var fs=require('fs');
-var config = {}
+var config = {};
+config.debug=true;
 config.web={};
 config.game={};
 config.web.host=true;
