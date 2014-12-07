@@ -32,7 +32,6 @@ require('./dbcheck.js')(knex).then(function() {
   app.use(express.static(dnjoin('public')));
   app.use(express.static(dnjoin('shared')));
   if(config.debug) {
-    console.log('lols');
     app.use('/debug',express.static(dnjoin('debug')));
     app.use('/debug/js/lib',express.static(dnjoin('bower_components')));
   }
