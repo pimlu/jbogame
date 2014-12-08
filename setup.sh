@@ -46,6 +46,9 @@ while getopts ":hipd:as:" opt; do case $opt in
 
     npm install
     sudo -u $SUDO_USER bower install
+    SOCKPATH=components/socket.io.js
+    [ -e $SOCKPATH ] || \
+      sudo -u $SUDO_USER cp node_modules/socket.io-client/socket.io.js $SOCKPATH
     ;;
   p)
     apt-get install -y postgresql postgresql-contrib ;;
@@ -82,7 +85,7 @@ localityName=.irci
 commonName=$DOMAIN
 organizationalUnitName=selkei
 emailAddress=pimlu@users.noreply.github.com"
-    
+
     # Generate the server private key
     openssl genrsa -des3 -out $FILE.key -passout env:PASSPHRASE 2048
 

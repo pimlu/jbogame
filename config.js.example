@@ -2,14 +2,23 @@ module.exports = config;
 var fs=require('fs');
 var config = {};
 config.debug=true;
-config.web={};
+config.front={};
 config.game={};
-config.web.host=true;
-config.web.port=8080;
-config.web.ports=8443;
-config.web.https={
-  key: fs.readFileSync('./https/zdelu.key'),
-  cert: fs.readFileSync('./https/zdelu.crt')
+config.front.workers=1;
+config.front.port=8080;
+config.front.ports=8443;
+config.front.https=function() {
+  return {
+    key: fs.readFileSync('./https/zdelu.key'),
+    cert: fs.readFileSync('./https/zdelu.crt')
+  };
+};
+var appjs='./server/app.js';
+config.game.types={
+  'mix':appjs,
+  'jbo':appjs,
+  'eng':appjs,
+  'commtest':'./debug/js/commserve.js'
 };
 config.game.worlds={};
 config.game.worlds[1]=['mix',8081];
@@ -21,10 +30,12 @@ config.knex={
     database:'jbogame'
   }
 };
-// stores state locally, don't use this in production
-var ExpressBrute=require('express-brute'),
+config.brute=function() {
+  // stores state locally, don't use this in production
+  var ExpressBrute=require('express-brute'),
   store=new (ExpressBrute.MemoryStore)();
-config.brute=new ExpressBrute(store,{
-  maxWait:600000//10m
-});
+  return new ExpressBrute(store,{
+    maxWait:600000//10m
+  });
+};
 module.exports = config;

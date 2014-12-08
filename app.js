@@ -1,46 +1,35 @@
-var config=require('./config.js'),
+var
+  config=require('./config.js'),
   _=require('lodash'),
-  http=require('http'),
-  https=require('https'),
-  express=require('express'),
-  bodyparser=require('body-parser');
-  path=require('path'),
   knex=require('knex')(config.knex),
-  brute=config.brute,
-  bcrypt=require('bcrypt');
-var app = express();
+  cluster = require('cluster');
 
-function forcehttps(req,res,next) {
-  if(req.secure) {
-    return next();
+var frontw=config.front.workers;
+var worldw=_.size(config.game.worlds);
+if(cluster.isMaster) {
+  console.log('master opening '+frontw+' front workers, '
+  +worldw+' world workers');
+  require('./dbcheck.js')(knex).then(function() {
+    for(var i=0;i<config.front.workers+worldw;i++) {
+      cluster.fork();
+    }
+  });
+} else {
+  var id=cluster.worker.id;
+  var front=id<=frontw;
+  if(front) {
+    console.log('worker '+id+': front');
+    require('./front.js')(knex);
+  } else {
+    //loop through world keys (the world number) until the IDth key
+    var i=frontw;
+    for(var wnum in config.game.worlds) {
+      if(++i===id) break;
+    }
+    var wcfg=config.game.worlds[wnum];
+    console.log('worker '+id+': '+'world #'+wnum+' '+JSON.stringify(wcfg));
+    //use the appropriate script to run the gameserver
+    var script=config.game.types[wcfg[0]];
+    require(script)(knex,wcfg);
   }
-  res.redirect('https://'+req.hostname
-    +(config.web.ports===443?'':':'+config.web.ports)
-    +req.url);
 }
-var dnjoin=path.join.bind(path,__dirname);
-
-require('./dbcheck.js')(knex).then(function() {
-  //runs after tables have been checked
-  console.log('setting up express...');
-
-  app.all('*', forcehttps);
-  //so we can post things and such
-  app.use(bodyparser.urlencoded({extended:true}));
-  app.use(bodyparser.json());
-  //set up routes
-  app.use(express.static(dnjoin('public')));
-  app.use(express.static(dnjoin('shared')));
-  if(config.debug) {
-    app.use('/debug',express.static(dnjoin('debug')));
-    app.use('/debug/js/lib',express.static(dnjoin('bower_components')));
-  }
-  app.use('/js/lib',express.static(dnjoin('bower_components')));
-  app.use('/kelci/js/lib',express.static(dnjoin('bower_components')));
-  app.post('/register',require('./register.js')(knex));
-  app.post('/changepass',brute.prevent,require('./changepass.js')(knex));
-  //listen on both ports
-  http.createServer(app).listen(config.web.port);
-  https.createServer(config.web.https,app).listen(config.web.ports);
-  console.log('web listening at %s and %s.',config.web.port,config.web.ports);
-});

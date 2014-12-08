@@ -2,7 +2,7 @@
 .DS_Store
 *.log
 config.js
-/bower_components
+/components
 *.pem
 *.csr
 *.crt
