@@ -19,9 +19,6 @@ function forcehttps(req,res,next) {
 }
 var dnjoin=path.join.bind(path,__dirname);
 
-function uselib(path) {
-  app.use(path+'/js/lib',express.static(dnjoin('components')));
-}
 module.exports=function(knex) {
   var brute=config.brute();
   //runs after tables have been checked
@@ -34,12 +31,11 @@ module.exports=function(knex) {
   //set up routes
   app.use(express.static(dnjoin('public')));
   app.use(express.static(dnjoin('shared')));
-  uselib('');
-  uselib('/kelci');
+  app.use('/js/lib',express.static(dnjoin('components')));
   app.post('/register',require('./register.js')(knex));
   app.post('/changepass',brute.prevent,require('./changepass.js')(knex));
   //listen on both ports
   http.createServer(app).listen(config.front.port);
   https.createServer(config.front.https(),app).listen(config.front.ports);
-  console.log('web listening at %s and %s.',config.front.port,config.front.ports);
+  console.log('front listening at %s and %s.',config.front.port,config.front.ports);
 };

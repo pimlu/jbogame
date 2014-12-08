@@ -1,9 +1,9 @@
 module.exports = config;
 var fs=require('fs');
 var config = {};
-config.debug=true;
-config.front={};
-config.game={};
+config.front={};//frontend website
+config.cd={};//content delivery
+config.game={};//gameservers
 config.front.workers=1;
 config.front.port=8080;
 config.front.ports=8443;
@@ -13,6 +13,9 @@ config.front.https=function() {
     cert: fs.readFileSync('./https/zdelu.crt')
   };
 };
+config.cd.workers=1;
+config.cd.port=1300;
+config.cd.dir='game';
 var appjs='./server/app.js';
 config.game.types={
   'mix':appjs,
