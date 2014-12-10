@@ -3,14 +3,13 @@ var
   _=require('lodash'),
   knex=require('knex')(config.knex),
   cluster = require('cluster'),
-  debug=require('./tridebug');
+  debug=require('./debug.js');
 
 var frontw=config.front.workers,
   cdw=config.cd.workers,
   worldw=_.size(config.game.worlds);
 if(cluster.isMaster) {
-  require('debug').disable('express:*,send');
-  debug=debug('master');
+  debug=debug('blue','master');
   debug('opening %s front workers, '+
   '%s cd workers, %s world workers',frontw,cdw,worldw);
   require('./dbcheck.js')(knex,debug).then(function() {
@@ -21,11 +20,13 @@ if(cluster.isMaster) {
 } else {
   var id=cluster.worker.id;
   if(id<=frontw) {
-    console.log('worker %s: front',id);
-    require('./front.js')(knex);
+    debug=debug('green','front',id)
+    debug('initializing');
+    require('./front.js')(knex,debug);
   } else if(id<=frontw+cdw) {
-    console.log('worker %s: content delivery',id);
-    require('./cd.js')();
+    debug=debug('red','cd',id-frontw)
+    debug('initializing');
+    require('./cd.js')(debug);
   } else {
     //loop through world keys (the world number) until the IDth key
     var i=frontw+cdw;
@@ -33,9 +34,10 @@ if(cluster.isMaster) {
       if(++i===id) break;
     }
     var wcfg=config.game.worlds[wnum];
-    console.log('worker %s: '+'world #%s %s',id,wnum,JSON.stringify(wcfg));
+    debug=debug('cyan','world',wnum);
+    debug('initializing %s',JSON.stringify(wcfg));
     //use the appropriate script to run the gameserver
     var script=config.game.types[wcfg[0]];
-    require(script)(knex,wcfg);
+    require(script)(knex,debug,wcfg);
   }
 }

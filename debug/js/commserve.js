@@ -1,3 +1,3 @@
-module.exports=function(knex,wcfg) {
-  console.log('commserve running');
+module.exports=function(knex,debug,wcfg) {
+  debug('commserve running');
 };

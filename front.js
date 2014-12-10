@@ -19,10 +19,10 @@ function forcehttps(req,res,next) {
 }
 var dnjoin=path.join.bind(path,__dirname);
 
-module.exports=function(knex) {
+module.exports=function(knex,debug) {
   var brute=config.brute();
   //runs after tables have been checked
-  console.log('setting up express...');
+  debug('setting up express...');
 
   app.all('*', forcehttps);
   //so we can post things and such
@@ -37,5 +37,5 @@ module.exports=function(knex) {
   //listen on both ports
   http.createServer(app).listen(config.front.port);
   https.createServer(config.front.https(),app).listen(config.front.ports);
-  console.log('front listening at %s and %s.',config.front.port,config.front.ports);
+  debug('listening at %s and %s.',config.front.port,config.front.ports);
 };

@@ -9,10 +9,10 @@ var
 
 var dnjoin=path.join.bind(path,__dirname);
 
-module.exports=function() {
+module.exports=function(debug) {
   app.use(express.static(dnjoin(config.cd.dir)));
   app.use('/js/lib',express.static(dnjoin('components')));
 
   http.createServer(app).listen(config.cd.port);
-  console.log('content delivery listening at %s',config.cd.port);
+  debug('serving %s, listening at %s',config.cd.dir,config.cd.port);
 };
