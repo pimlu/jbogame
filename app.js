@@ -2,15 +2,18 @@ var
   config=require('./config.js'),
   _=require('lodash'),
   knex=require('knex')(config.knex),
-  cluster = require('cluster');
+  cluster = require('cluster'),
+  debug=require('./tridebug');
 
 var frontw=config.front.workers,
   cdw=config.cd.workers,
   worldw=_.size(config.game.worlds);
 if(cluster.isMaster) {
-  console.log('master opening %s front workers, '+
+  require('debug').disable('express:*,send');
+  debug=debug('master');
+  debug('opening %s front workers, '+
   '%s cd workers, %s world workers',frontw,cdw,worldw);
-  require('./dbcheck.js')(knex).then(function() {
+  require('./dbcheck.js')(knex,debug).then(function() {
     for(var i=0;i<frontw+cdw+worldw;i++) {
       cluster.fork();
     }
