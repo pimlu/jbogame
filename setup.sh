@@ -13,12 +13,14 @@ function helpmsg {
       updates npm, does npm/bower install
   -p: installs postgres if not already
   -d <name>: creates a database named <name> on your postgres installation
+  -r: sets up redis
+  -b <intf>: tells redis to bind to <intf>
   -a: sets up trust-based auth in postgres
   -s <fqdn>: creates a self-signed cert for you with commonName <fqdn>"
   exit 1
 }
 if [ $# == 0 ]; then helpmsg; fi
-while getopts ":hipd:as:" opt; do case $opt in
+while getopts ":hipd:rb:as:" opt; do case $opt in
   h)
     helpmsg ;;
   i)
@@ -54,6 +56,15 @@ while getopts ":hipd:as:" opt; do case $opt in
     apt-get install -y postgresql postgresql-contrib ;;
   d)
     sudo -u postgres psql -c "create database $OPTARG" ;;
+  r)
+    apt-get install -y redis-server ;;
+  b)
+    CNF=/etc/redis/redis.conf
+    NEWCNF=$CNF.`date +"%s"`.backup
+    mv $CNF $NEWCNF
+    sed 's/bind 127.0.0.1/& '$OPTARG'/' $NEWCNF>$CNF
+    service redis-server restart
+    ;;
   a)
     VERSION=`sudo -u postgres psql -c 'SELECT version()'\
     |grep -oh "[0-9]\.[0-9]"|tr " " "\n"|head -n 1`

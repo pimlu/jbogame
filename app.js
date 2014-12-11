@@ -24,7 +24,7 @@ if(cluster.isMaster) {
     debug('initializing');
     require('./front.js')(knex,debug);
   } else if(id<=frontw+cdw) {
-    debug=debug('red','cd',id-frontw)
+    debug=debug('red','cd',id-frontw);
     debug('initializing');
     require('./cd.js')(debug);
   } else {

@@ -1,4 +1,5 @@
-var Promise=require('bluebird'),
+var config=require('./config'),
+  Promise=require('bluebird'),
   bcrypt=require('bcrypt'),
   hashp=Promise.promisify(bcrypt.hash),
   checkpass=require('./checkpass.js'),
@@ -16,8 +17,9 @@ module.exports=function(knex) {
         if(!correct) {
           feedback=[false,'username/old password do not match'];
         } else {//if it does, update password
-          return hashp(body.pass,10).then(function(hash) {
-            return knex('users').update({pass:hash,changedpass:knex.raw('now()'),ip:req.ip});
+          return hashp(body.pass,config.front.rounds).then(function(hash) {
+            return knex('users').update(
+              {pass:hash,changedpass:knex.raw('now()'),ip:req.ip});
           });
         }
       }).then(function() {

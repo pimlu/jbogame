@@ -13,6 +13,7 @@ config.front.https=function() {
     cert: fs.readFileSync('./https/zdelu.crt')
   };
 };
+config.front.rounds=8;
 config.cd.workers=1;
 config.cd.port=1300;
 config.cd.dir='game';
@@ -32,6 +33,11 @@ config.knex={
     user:'postgres',
     database:'jbogame'
   }
+};
+config.redis={
+  host:'127.0.0.1',
+  port:6379,
+  options:{}
 };
 config.brute=function() {
   // stores state locally, don't use this in production

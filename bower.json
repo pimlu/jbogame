@@ -12,6 +12,7 @@
   "private": true,
   "dependencies": {
     "jquery": "~2.1.1",
-    "threejs": "*"
+    "threejs": "*",
+    "jssha": "~1.5.0"
   }
 }

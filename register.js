@@ -1,4 +1,5 @@
-var Promise=require('bluebird'),
+var config=require('./config.js'),
+  Promise=require('bluebird'),
   bcrypt=require('bcrypt'),
   hashp=Promise.promisify(bcrypt.hash);
 var validateuser=require('./shared/js/validuser.js');
@@ -15,7 +16,7 @@ module.exports=function(knex) {
         if(row.length===1) {
           feedback=[false,'user already exists'];
         } else {//if it doesn't, hash and insert
-          return hashp(body.pass,10).then(function(hash) {
+          return hashp(body.pass,config.front.rounds).then(function(hash) {
             return knex('users').insert({name:body.name,pass:hash,ip:req.ip});
           });
         }

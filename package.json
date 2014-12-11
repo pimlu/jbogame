@@ -10,9 +10,11 @@
     "colors": "^1.0.3",
     "express": "^4.10.4",
     "express-brute": "^0.5.1",
+    "jssha": "^1.5.0",
     "knex": "^0.7.3",
     "lodash": "^2.4.1",
     "pg": "^4.0.0",
+    "redis": "^0.12.1",
     "socket.io": "^1.2.1",
     "socket.io-client": "^1.2.1"
   },
