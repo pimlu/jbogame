@@ -1,5 +1,5 @@
 var
-  config=require('./config.js'),
+  config=require('../config.js'),
   _=require('lodash'),
   path=require('path'),
   http=require('http'),

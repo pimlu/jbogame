@@ -1,4 +1,4 @@
-var config=require('./config'),
+var config=require('../config'),
   Promise=require('bluebird'),
   bcrypt=require('bcrypt'),
   hashp=Promise.promisify(bcrypt.hash),

@@ -22,11 +22,11 @@ if(cluster.isMaster) {
   if(id<=frontw) {
     debug=debug('green','front',id)
     debug('initializing');
-    require('./front.js')(knex,debug);
+    require('./front/front.js')(knex,debug);
   } else if(id<=frontw+cdw) {
     debug=debug('red','cd',id-frontw);
     debug('initializing');
-    require('./cd.js')(debug);
+    require('./cd/cd.js')(debug);
   } else {
     //loop through world keys (the world number) until the IDth key
     var i=frontw+cdw;

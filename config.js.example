@@ -9,8 +9,8 @@ config.front.port=8080;
 config.front.ports=8443;
 config.front.https=function() {
   return {
-    key: fs.readFileSync('./https/zdelu.key'),
-    cert: fs.readFileSync('./https/zdelu.crt')
+    key: fs.readFileSync('./front/https/zdelu.key'),
+    cert: fs.readFileSync('./front/https/zdelu.crt')
   };
 };
 config.front.rounds=8;
