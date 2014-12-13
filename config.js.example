@@ -1,12 +1,13 @@
 module.exports = config;
 var fs=require('fs');
 var config = {};
+config.proxy={};//head of everything
 config.front={};//frontend website
-config.cd={};//content delivery
 config.game={};//gameservers
+config.proxy.port=8080;
+config.proxy.ports=8443;
 config.front.workers=1;
-config.front.port=8080;
-config.front.ports=8443;
+config.front.port=1300;
 config.front.https=function() {
   return {
     key: fs.readFileSync('./front/https/zdelu.key'),
@@ -14,9 +15,8 @@ config.front.https=function() {
   };
 };
 config.front.rounds=8;
-config.cd.workers=1;
-config.cd.port=1300;
-config.cd.dir='game';
+config.front.cd={};
+config.front.cd.dir='game';
 var appjs='./server/app.js';
 config.game.types={
   'mix':appjs,
