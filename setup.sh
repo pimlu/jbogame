@@ -79,7 +79,7 @@ host all all ::1/128 trust" >> $HBA
   s)
     apt-get install -y openssl
     #this bit right here was automated thanks to someone's gist on github
-    cd $DIR/https
+    cd $DIR/proxy/https
     DOMAIN=$OPTARG
     FILE=zdelu
     ( ls -1|grep $FILE ) && rm `ls -1|grep $FILE`

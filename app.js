@@ -22,11 +22,11 @@ if(cluster.isMaster) {
   if(id<=proxyw) {
     debug=debug('magenta','proxy',id);
     debug('initializing');
-    require('./proxy/proxy.js')(debug);
+    require('./proxy')(debug);
   } else if(id<=proxyw+frontw) {
     debug=debug('green','front',id-proxyw);
     debug('initializing');
-    require('./front/front.js')(knex,debug);
+    require('./front')(knex,debug);
   } else {
     //loop through world keys (the world number) until the IDth key
     var i=proxyw+frontw;
