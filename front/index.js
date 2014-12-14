@@ -21,7 +21,10 @@ module.exports=function(knex,debug) {
   //set up routes
   app.use(express.static(dnjoin('public')));
   app.use(express.static(dnjoin('shared')));
-  app.use('/js/lib',express.static(dnjoin('components')));
+  app.use('/js/lib',express.static(dnjoin('../components')));
+  //set up content delivery for the game
+  require('./cd.js')(app,express,debug);
+  //POST forms
   app.post('/register',require('./register.js')(knex));
   app.post('/changepass',brute.prevent,require('./changepass.js')(knex));
   //listen on both ports
