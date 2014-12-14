@@ -5,26 +5,31 @@ var
   cluster = require('cluster'),
   debug=require('./debug.js');
 
-var frontw=config.front.workers,
+var proxyw=config.proxy.workers,
+  frontw=config.front.workers,
   worldw=_.size(config.game.worlds);
 if(cluster.isMaster) {
   debug=debug('blue','master');
-  debug('opening %s front workers, '+
-  '%s world workers',frontw,worldw);
+  debug('opening %s proxy workers, %s front workers, '+
+  '%s world workers',proxyw,frontw,worldw);
   require('./dbcheck.js')(knex,debug).then(function() {
-    for(var i=0;i<frontw+worldw;i++) {
+    for(var i=0;i<proxyw+frontw+worldw;i++) {
       cluster.fork();
     }
   });
 } else {
   var id=cluster.worker.id;
-  if(id<=frontw) {
-    debug=debug('green','front',id)
+  if(id<=proxyw) {
+    debug=debug('magenta','proxy',id);
+    debug('initializing');
+    require('./proxy/proxy.js')(debug);
+  } else if(id<=proxyw+frontw) {
+    debug=debug('green','front',id-proxyw);
     debug('initializing');
     require('./front/front.js')(knex,debug);
   } else {
     //loop through world keys (the world number) until the IDth key
-    var i=frontw;
+    var i=proxyw+frontw;
     for(var wnum in config.game.worlds) {
       if(++i===id) break;
     }

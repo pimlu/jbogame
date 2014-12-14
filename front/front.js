@@ -3,28 +3,18 @@ var
   _=require('lodash'),
   path=require('path'),
   http=require('http'),
-  https=require('https'),
   express=require('express'),
   bodyparser=require('body-parser'),
   bcrypt=require('bcrypt'),
   app = express();
 
-function forcehttps(req,res,next) {
-  if(req.secure) {
-    return next();
-  }
-  res.redirect('https://'+req.hostname
-  +(config.front.ports===443?'':':'+config.front.ports)
-  +req.url);
-}
 var dnjoin=path.join.bind(path,__dirname);
 
 module.exports=function(knex,debug) {
   var brute=config.brute();
   //runs after tables have been checked
   debug('setting up express...');
-
-  app.all('*', forcehttps);
+  app.enable('trust proxy');//for http-proxy
   //so we can post things and such
   app.use(bodyparser.urlencoded({extended:true}));
   app.use(bodyparser.json());
@@ -36,6 +26,5 @@ module.exports=function(knex,debug) {
   app.post('/changepass',brute.prevent,require('./changepass.js')(knex));
   //listen on both ports
   http.createServer(app).listen(config.front.port);
-  https.createServer(config.front.https(),app).listen(config.front.ports);
-  debug('listening at %s and %s.',config.front.port,config.front.ports);
+  debug('listening at %s.',config.front.port);
 };

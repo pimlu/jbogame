@@ -4,14 +4,15 @@ var config = {};
 config.proxy={};//head of everything
 config.front={};//frontend website
 config.game={};//gameservers
+config.proxy.workers=1;
 config.proxy.port=8080;
 config.proxy.ports=8443;
 config.front.workers=1;
 config.front.port=1300;
 config.front.https=function() {
   return {
-    key: fs.readFileSync('./front/https/zdelu.key'),
-    cert: fs.readFileSync('./front/https/zdelu.crt')
+    key: fs.readFileSync('./proxy/https/zdelu.key'),
+    cert: fs.readFileSync('./proxy/https/zdelu.crt')
   };
 };
 config.front.rounds=8;
