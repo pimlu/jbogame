@@ -10,7 +10,7 @@ var
 
 var dnjoin=path.join.bind(path,__dirname);
 
-module.exports=function(knex,debug) {
+module.exports=function(debug,knex) {
   var brute=config.brute();
   //runs after tables have been checked
   debug('setting up express...');

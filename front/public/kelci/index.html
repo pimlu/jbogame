@@ -6,8 +6,12 @@
   <script src="js/lib/jquery/dist/jquery.min.js"></script>
   <script src="js/lib/socket.io.js"></script>
   <script>
+var world=1;
+var url=window.location.href.replace(window.location.hash,'');
+var socket=io('/',{path:'/world/'+world});
 $(function() {
   console.log('components loaded');
+
 });
   </script>
 </head>

@@ -7,7 +7,8 @@ var
 
 var proxyw=config.proxy.workers,
   frontw=config.front.workers,
-  worldw=_.size(config.game.worlds);
+  worldw=_.size(config.server.worlds);
+
 if(cluster.isMaster) {
   debug=debug('blue','master');
   debug('opening %s proxy workers, %s front workers, '+
@@ -21,23 +22,21 @@ if(cluster.isMaster) {
   var id=cluster.worker.id;
   if(id<=proxyw) {
     debug=debug('magenta','proxy',id);
-    debug('initializing');
     require('./proxy')(debug);
   } else if(id<=proxyw+frontw) {
     debug=debug('green','front',id-proxyw);
-    debug('initializing');
-    require('./front')(knex,debug);
+    require('./front')(debug,knex);
   } else {
     //loop through world keys (the world number) until the IDth key
     var i=proxyw+frontw;
-    for(var wnum in config.game.worlds) {
+    for(var wnum in config.server.worlds) {
       if(++i===id) break;
     }
-    var wcfg=config.game.worlds[wnum];
+    var wcfg=config.server.worlds[wnum].splice(0);
+    wcfg.push(wnum);
     debug=debug('cyan','world',wnum);
-    debug('initializing %s',JSON.stringify(wcfg));
     //use the appropriate script to run the gameserver
-    var script=config.game.types[wcfg[0]];
-    require(script)(knex,debug,wcfg);
+    var script=config.server.types[wcfg[0]];
+    require(script)(debug,wcfg,knex);
   }
 }
