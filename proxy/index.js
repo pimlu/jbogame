@@ -71,8 +71,11 @@ module.exports=function(debug) {
     }
   });
   server.on('upgrade',function(req,socket,head) {
-    //TODO websocket code
-    debug('upgrade attempt');
+    //similar capture, then route properly.
+    var capture=/^\/world\/([0-9]+)\/(.*)/.exec(req.url);
+    var wnum=capture[1],qs=capture[2];
+    req.url='/socket.io/'+qs;
+    proxies[wnum].ws(req,socket,head);
   });
   redirect.listen(port);
   server.listen(ports);
