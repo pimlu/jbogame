@@ -58,25 +58,30 @@ module.exports=function(debug) {
       delete proxies[wnum];
     }
   }
-
+  function wsroute(req,res,method,head) {
+    //capture url groups
+    var capture=/^\/world\/([0-9]+)\/(.*)/.exec(req.url);
+    var wnum=capture[1],qs=capture[2];
+    //route to socket server
+    if(proxies[wnum]) {
+      req.url='/socket.io/'+qs;
+      proxies[wnum][head?'ws':'web'](req,res,head);
+    } else {
+      //route doesn't exist, yell what error color
+      res.writeHead(502,{'Content-Type':'text/plain'});
+      var info=status[wnum]||['red'];
+      res.end(info[0]);
+    }
+  }
   //right now only cares about frontproxy, may change
   var server = https.createServer(config.proxy.https(),function(req,res) {
     if(/^\/world\/[0-9]+\//.test(req.url)) {
-      var capture=/^\/world\/([0-9]+)\/(.*)/.exec(req.url);
-      var wnum=capture[1],qs=capture[2];
-      req.url='/socket.io/'+qs;
-      proxies[wnum].web(req,res);
+      wsroute(req,res);
     } else {
       frontproxy.web(req,res);
     }
   });
-  server.on('upgrade',function(req,socket,head) {
-    //similar capture, then route properly.
-    var capture=/^\/world\/([0-9]+)\/(.*)/.exec(req.url);
-    var wnum=capture[1],qs=capture[2];
-    req.url='/socket.io/'+qs;
-    proxies[wnum].ws(req,socket,head);
-  });
+  server.on('upgrade',wsroute);
   redirect.listen(port);
   server.listen(ports);
   debug('listening at %s and %s.',port,ports);
