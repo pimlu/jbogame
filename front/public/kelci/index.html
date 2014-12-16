@@ -11,7 +11,11 @@ var url=window.location.href.replace(window.location.hash,'');
 var socket=io('/',{path:'/world/'+world});
 $(function() {
   console.log('components loaded');
-
+  socket.emit('msg','client message');
+  socket.on('msg',function(msg) {
+    console.log('server says "%s"',msg);
+    setTimeout(function(){socket.emit('msg','client message')},1000);
+  })
 });
   </script>
 </head>

@@ -9,6 +9,10 @@ module.exports=function(debug,wcfg,knex) {
   debug('server running %s',JSON.stringify(wcfg));
   io.on('connection', function(socket){
     debug('connect');
+    socket.on('msg',function(msg) {
+      debug('client says "%s"',msg);
+      socket.emit('msg','server message');
+    });
   });
   io.listen(wcfg[1]);
   reset=require('./setstatus.js')(debug,wcfg[2],wcfg[0],wcfg[1],redis,rdcl);

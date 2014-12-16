@@ -24,10 +24,6 @@ while getopts ":hipd:rb:as:" opt; do case $opt in
   h)
     helpmsg ;;
   i)
-    apt-get install -y build-essential libudev-dev libdrm-dev\
-    libgconf2-dev libgcrypt11-dev libpci-dev libxtst-dev python\
-    libnss3-dev  libasound2-dev libpulse-dev libjpeg62-dev libxv-dev\
-    libgtk2.0-dev libexpat1-dev
 
     #if node is not installed
     if ! hash node 2>/dev/null; then
