@@ -14,7 +14,7 @@ HTTP+postgres+redis:
 
 Just postgres:
 
-  * `sudo ./setup.sh -pda jbogame`
+  * `sudo ./setup.sh -pad jbogame`
 
 Just redis:
 
