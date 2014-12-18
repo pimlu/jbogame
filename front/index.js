@@ -23,7 +23,7 @@ module.exports=function(debug,knex) {
   app.use(express.static(dnjoin('shared')));
   app.use('/js/lib',express.static(dnjoin('../components')));
   //set up content delivery for the game
-  require('./cd.js')(app,express,debug);
+  require('./cd.js')(debug,app,express);
   //POST forms
   app.post('/register',require('./register.js')(knex));
   app.post('/changepass',brute.prevent,require('./changepass.js')(knex));

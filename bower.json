@@ -12,6 +12,7 @@
   "private": true,
   "dependencies": {
     "jquery": "~2.1.1",
-    "threejs": "*"
+    "threejs": "*",
+    "requirejs": "~2.1.15"
   }
 }

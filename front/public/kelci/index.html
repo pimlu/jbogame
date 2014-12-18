@@ -3,10 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <title>kelci</title>
-  <script src="js/lib/jquery/dist/jquery.min.js"></script>
-  <script src="js/lib/socket.io.js"></script>
+  <link rel="stylesheet" href="css/main.css"/>
   <script>
-var world=1;
+/*var world=1;
 var url=window.location.href.replace(window.location.hash,'');
 var socket=io('/',{path:'/world/'+world});
 $(function() {
@@ -16,10 +15,11 @@ $(function() {
     console.log('server says "%s"',msg);
     setTimeout(function(){socket.emit('msg','client message')},1000);
   })
-});
+});*/
   </script>
+
+  <script data-main="js/main" src="js/lib/requirejs/require.js"></script>
 </head>
 <body>
-  world selector/game loader goes here
 </body>
 </html>
