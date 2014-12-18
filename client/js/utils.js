@@ -41,7 +41,7 @@ define([],function() {
     function LinkedList(arr) {
       this.head=this.tail=null;
       if(arr) this.pusharr(arr);
-    };
+    }
     LinkedList.prototype.isempty=function() {
       return this.head===null;
     };
@@ -55,7 +55,7 @@ define([],function() {
             return ret;
           }
           return {done:true};
-        }
+        };
       }
       return {
         next:dirgen('next'),
@@ -106,7 +106,7 @@ define([],function() {
         return list.head?{done:false,value:list.head.remove()}:{done:true};
       }
     };
-  }
+  };
   //this func applies css rules like an actual css document
   function applycss(e,s) {
     var x=s.split(';').map(

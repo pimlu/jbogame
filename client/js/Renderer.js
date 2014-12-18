@@ -1,7 +1,7 @@
 define(['jquery','three','utils'],function($,THREE,utils) {
   Element.prototype.requestPointerLock = Element.prototype.requestPointerLock || Element.prototype.mozRequestPointerLock || Element.prototype.webkitRequestPointerLock;
   function Renderer(o) {
-    for(i in o) this[i]=o[i];
+    for(var i in o) this[i]=o[i];
 
     var r = this.r= new THREE.WebGLRenderer();
 

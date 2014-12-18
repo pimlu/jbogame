@@ -6,8 +6,8 @@ function(Localizer,Controls,Renderer) {
       res:{x:800,y:600},
       debug:false
     };
-    for(i in defaults) this[i]=defaults[i];
-    for(i in o) this[i]=o[i];
+    for(var i in defaults) this[i]=defaults[i];
+    for(var i in o) this[i]=o[i];
     this.localizer=new Localizer('en','jbo');
     this.controls=new Controls({game:this});
     var ro={
