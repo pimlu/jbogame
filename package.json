@@ -13,8 +13,10 @@
     "http-proxy": "^1.7.3",
     "knex": "^0.7.3",
     "lodash": "^2.4.1",
+    "noisejs": "^2.1.0",
     "pg": "^4.0.0",
     "redis": "^0.12.1",
+    "seedrandom": "^2.3.11",
     "socket.io": "^1.2.1",
     "socket.io-client": "^1.2.1"
   },
