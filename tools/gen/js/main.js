@@ -9,9 +9,7 @@ require.config({
     three:{exports:'THREE'}
   }
 });
-require(['./Game'],function(Game) {
+require(['./terraingen'],function(tg) {
   $(function() {
-    console.log('happening');
-    game=new Game();
   });
 });

@@ -3,7 +3,7 @@ var config=require('../config'),
   bcrypt=require('bcrypt'),
   hashp=Promise.promisify(bcrypt.hash),
   checkpass=require('./checkpass.js'),
-  validnewpass=require('./shared/js/validnewpass.js');
+  validnewpass=require('./shared/validnewpass.js');
 module.exports=function(knex) {
   return function(req, res) {
     var body=req.body;

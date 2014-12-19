@@ -3,7 +3,7 @@ var
   Promise=require('bluebird'),
   bcrypt=require('bcrypt'),
   hashp=Promise.promisify(bcrypt.hash);
-var validateuser=require('./shared/js/validuser.js');
+var validateuser=require('./shared/validuser.js');
 module.exports=function(knex) {
   return function(req, res) {
     var body=req.body;

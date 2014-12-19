@@ -8,20 +8,20 @@ var
   bcrypt=require('bcrypt'),
   app = express();
 
-var dnjoin=path.join.bind(path,__dirname);
-
 module.exports=function(debug,knex) {
-  var brute=config.brute();
   //runs after tables have been checked
   debug('setting up express...');
+  var static=config.static(app,express);
+  var brute=config.brute();
   app.enable('trust proxy');//for http-proxy
   //so we can post things and such
   app.use(bodyparser.urlencoded({extended:true}));
   app.use(bodyparser.json());
   //set up routes
-  app.use(express.static(dnjoin('public')));
-  app.use(express.static(dnjoin('shared')));
-  app.use('/js/lib',express.static(dnjoin('../components')));
+  static('/','front/public');
+  static('/js','front/shared');
+  static('/js/lib','components');
+  if(config.front.tools) require('./tools.js')(debug,app,express);
   //set up content delivery for the game
   require('./cd.js')(debug,app,express);
   //POST forms

@@ -1,6 +1,12 @@
-module.exports = config;
-var fs=require('fs');
+var fs=require('fs'),
+  path=require('path');
 var config = {};
+var dnjoin=config.dnjoin=path.join.bind(path,__dirname);
+config.static=function(app,express) {
+  return function(url,dir) {
+    app.use(url,express.static(dnjoin(dir)))
+  };
+};
 config.proxy={};//head of everything
 config.front={};//frontend website
 config.server={};//gameservers
@@ -19,6 +25,7 @@ config.front.port=1300;
 config.front.rounds=8;
 config.front.cd={};
 config.front.cd.dir='client';
+config.front.tools=false;
 var main='./server/index.js';
 config.server.types={
   'mix':main,
