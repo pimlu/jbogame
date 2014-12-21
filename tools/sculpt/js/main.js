@@ -13,7 +13,7 @@ require.config({
     three:{exports:'THREE'}
   }
 });
-require(['jquery','scuplt'],function($,sculpt) {
+require(['jquery','sculpt'],function($,sculpt) {
   $(start.bind(null,$,sculpt));
 });
 var planet,height;

@@ -10,4 +10,5 @@ module.exports=function(debug,app,express) {
     static('/tools/'+url+'/js/lib','components');
   }
   jsroute('gen');
+  jsroute('sculpt');
 };
