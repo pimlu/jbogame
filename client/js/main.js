@@ -2,6 +2,7 @@ var game;
 require.config({
   paths:{
     jquery:'./lib/jquery/dist/jquery.min',
+    'jquery-ui':'./lib/jquery-ui/ui',
     three:'./lib/threejs/build/three.min',
     socketio:'./lib/socket.io'
   },
@@ -11,7 +12,6 @@ require.config({
 });
 require(['./Game'],function(Game) {
   $(function() {
-    console.log('happening');
     game=new Game();
   });
 });

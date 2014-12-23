@@ -17,6 +17,7 @@
     "seedrandom": "~2.3.11",
     "noisejs": "*",
     "stats.js": "*",
-    "dat-gui": "~0.5.0"
+    "dat-gui": "~0.5.0",
+    "jquery-ui": "~1.11.2"
   }
 }

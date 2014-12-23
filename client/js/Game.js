@@ -1,5 +1,5 @@
-define(['./Localizer','./Controls','./Renderer'],
-function(Localizer,Controls,Renderer) {
+define(['./Localizer','./Controls','./Renderer','./HUD'],
+function(Localizer,Controls,Renderer,HUD) {
   function Game(o) {
     var defaults={
       directory:{},
@@ -16,6 +16,7 @@ function(Localizer,Controls,Renderer) {
       debug:this.debug
     };
     this.renderer=new Renderer(ro);
+    this.HUD=new HUD(ro,this.renderer);
     this.localizer.trigger();
     this.frame();
   }

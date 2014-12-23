@@ -1,14 +1,22 @@
-html.full, html.full body{
+html, body{
   height:100%;
 }
-html.full body {
+body {
   overflow:hidden;
 }
-html.full * {
+* {
   margin:0;
   padding:0;
+  font-family:sans-serif;
 }
 canvas.game {
   width:100% !important;
   height:100% !important;
+}
+
+div.overlay {
+  position: absolute;
+  top:0;
+  width: 100%;
+  height: 100%;
 }

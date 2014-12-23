@@ -6,18 +6,12 @@ define(['jquery','three','utils'],function($,THREE,utils) {
     var r = this.r= new THREE.WebGLRenderer();
 
     this.camera = new THREE.PerspectiveCamera(70,1,1,1000 );
-    //default to using the body as our element
-    if(!this.elem) {
-      this.elem=document.body;
-      $('html').addClass('full');
-      this.winresize();
-      window.addEventListener( 'resize', this.winresize.bind(this) , false );
-    } else {
-      r.setSize( this.w, this.h );
-    }
 
-    //append the blocker before the canvas
-    this.makeblocker();
+    this.elem=document.body;
+    $('html').addClass('full');
+    this.winresize();
+    window.addEventListener( 'resize', this.winresize.bind(this) , false );
+
     $(r.domElement).addClass('game');
     this.elem.appendChild( r.domElement );
 
@@ -45,28 +39,6 @@ define(['jquery','three','utils'],function($,THREE,utils) {
 
     this.r=r;
   }
-  Renderer.prototype.makeblocker=function() {
-
-    //this guy shows up when we don't have pointer lock
-    this.blocker=document.createElement('div');
-    utils.applycss($(this.blocker),'color:#fff;background-color:rgba(0,0,0,0.5);'+
-      'width:100%;height:100%;position:absolute;'+
-      'font-family:sans-serif;font-size:2em;');
-    this.instr=document.createElement('div');
-    utils.applycss($(this.instr),'display:-moz-box;width:100%;height:100%;'+
-      'box-orient:horizontal;box-pack:center;box-align:center;');
-    this.game.localizer.cbs.push(function() {
-      this.instr.innerHTML=this.game.localizer.l('blocker');
-    }.bind(this));
-    this.blocker.appendChild(this.instr);
-    this.elem.appendChild(this.blocker);
-
-    var blocker=this.blocker;
-    $(this.blocker).click(function(){
-      $(blocker).hide();
-      this.enterlock();
-    }.bind(this));
-  };
   Renderer.prototype.enterlock=function() {
     this.r.domElement.requestPointerLock();
   };
