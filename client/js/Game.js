@@ -1,5 +1,5 @@
-define(['./Localizer','./Controls','./Renderer','./HUD'],
-function(Localizer,Controls,Renderer,HUD) {
+define(['./Controls','./Renderer','./HUD'],
+function(Controls,Renderer,HUD) {
   function Game(o) {
     var defaults={
       directory:{},
@@ -8,7 +8,6 @@ function(Localizer,Controls,Renderer,HUD) {
     };
     for(var i in defaults) this[i]=defaults[i];
     for(var i in o) this[i]=o[i];
-    this.localizer=new Localizer('en','jbo');
     this.controls=new Controls({game:this});
     var ro={
       game:this,
@@ -17,7 +16,6 @@ function(Localizer,Controls,Renderer,HUD) {
     };
     this.renderer=new Renderer(ro);
     this.HUD=new HUD(ro,this.renderer);
-    this.localizer.trigger();
     this.frame();
   }
   Game.prototype.register=function(name,value) {

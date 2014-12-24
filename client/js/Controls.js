@@ -1,4 +1,4 @@
-define(function() {
+define(['es5-shim','es6-shim'],function() {
   function Controls(o) {
     for(i in o) this[i]=o[i];
     this.keys=new Array(128).fill(false);

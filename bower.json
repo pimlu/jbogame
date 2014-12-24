@@ -18,6 +18,9 @@
     "noisejs": "*",
     "stats.js": "*",
     "dat-gui": "~0.5.0",
-    "jquery-ui": "~1.11.2"
+    "jquery-ui": "~1.11.2",
+    "lodash": "~2.4.1",
+    "es5-shim": "~4.0.5",
+    "es6-shim": "~0.22.1"
   }
 }
