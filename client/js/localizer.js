@@ -5,13 +5,17 @@ define(['./locales/locales'],function(locales) {
   localizer.cbs=[];
   localizer.primary='en';
   localizer.secondary='jbo';
-  var proto = Object.create(HTMLElement.prototype);
+
   //the second argument just gets the attribute with the given name
   function update() {
     this.innerHTML=localizer.l(this.getAttribute('n'),this.getAttribute.bind(this));
   }
-  proto.attachedCallback=proto.attributeChangedCallback=update;
-  localizer.xt = document.registerElement('x-t', {prototype: proto});
+  function register(name,type,ext) {
+    var elem=Object.create(type.prototype);
+    elem.attachedCallback=elem.attributeChangedCallback=update;
+    localizer[name]=document.registerElement(name,{prototype:elem},ext);
+  }
+  register('x-t',HTMLElement);
 
   localizer.langs=locales;
   /* l: localizes a string.

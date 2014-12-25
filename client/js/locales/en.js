@@ -2,7 +2,11 @@ define(['./setup'],function(setup) {
   var en={
     lang:'language',
     langname:'English',
-    login:'pls login',
+    plsplay:'Welcome to zdelu!  Try as a guest or log in.',
+    guest:'guest',
+    login:'log in',
+    username:'username',
+    password:'password',
     titletest:'test title',
     alerttest:'alert test',
     attrtest:function(l,o) {

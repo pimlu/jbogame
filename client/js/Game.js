@@ -1,4 +1,4 @@
-define(['./Controls','./Renderer','./HUD'],
+define(['Controls','Renderer','HUD/HUD'],
 function(Controls,Renderer,HUD) {
   function Game(o) {
     var defaults={

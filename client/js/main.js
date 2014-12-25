@@ -13,7 +13,7 @@ require.config({
     three:{exports:'THREE'}
   }
 });
-require(['./Game','./localizer'],function(Game,l) {
+require(['Game','localizer'],function(Game,l) {
   $(function() {
     game=new Game();
   });
