@@ -9,11 +9,19 @@ define(['lodash','jquery','jquery-ui/dialog','../utils'],function(_,$,ui,utils) 
       return div('<x-t n="attrtest" number="123"></x-t>');
     },
     plsplay:function() {
-      return div('<x-t n="plsplay"></x-t><br/>'+
+      var d=div('<x-t n="plsplay"></x-t><br/>'+
         '<button id="guest"><x-t n="guest"></x-t></button><br/>'+
         '<button id="login"><x-t n="login"></x-t></button><br/>'+
         '<x-t n="username"></x-t>: <input type="text" id="name"/><br/>'+
-        '<x-t n="password"></x-t>: <input type="text" id="pass"/><br/>');
+        '<x-t n="password"></x-t>: <input type="password" id="pass"/><br/>');
+      d.children('#login').click(function() {
+        var qs={name:d.children('#name').val(),pass:d.children('#pass').val()};
+        $.post('/auth',qs).done(function(data) {
+          console.log(data.token);
+          if(data.token) d.dialog('close');
+        });
+      });
+      return d;
     },
   };
 

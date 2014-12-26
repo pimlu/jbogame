@@ -22,6 +22,7 @@ div.overlay {
 }
 
 
-.ui-dialog-content input[type="text"] {
+.ui-dialog-content input[type="text"],
+.ui-dialog-content input[type="password"] {
   width:3cm;
 }
