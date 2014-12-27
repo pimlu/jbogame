@@ -1,7 +1,6 @@
-define(['es5-shim','es6-shim'],function() {
-  function Controls(o) {
-    for(i in o) this[i]=o[i];
-    this.keys=new Array(128).fill(false);
+define([],function() {
+  function Controls(all) {
+    this.keys=new Array(256).fill(false);
     document.addEventListener('mousemove',this.mousemove,false);
     document.addEventListener('keydown',this.keydown.bind(this),false);
     document.addEventListener('keyup',this.keyup.bind(this),false);
@@ -10,7 +9,7 @@ define(['es5-shim','es6-shim'],function() {
     this.dy=0;
   }
   Controls.prototype.keydown=function(e) {
-    console.log('pressed '+String.fromCharCode(e.keyCode));
+    //console.log('pressed '+String.fromCharCode(e.keyCode));
     this.keys[e.keyCode]=true;
   };
   Controls.prototype.keyup=function(e) {

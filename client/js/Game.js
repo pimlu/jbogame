@@ -1,5 +1,5 @@
-define(['Controls','Renderer','HUD/HUD'],
-function(Controls,Renderer,HUD) {
+define(['pubsub','Controls','Renderer','HUD/HUD'],
+function(ps,Controls,Renderer,HUD) {
   function Game(o) {
     var defaults={
       directory:{},
@@ -8,32 +8,27 @@ function(Controls,Renderer,HUD) {
     };
     for(var i in defaults) this[i]=defaults[i];
     for(var i in o) this[i]=o[i];
-    this.controls=new Controls({game:this});
-    var ro={
+    //important information to give to every component
+    var all=this.all={
       game:this,
+      ps:ps,
       res:this.res,
       debug:this.debug
     };
-    this.renderer=new Renderer(ro);
-    this.HUD=new HUD(ro,this.renderer);
+    this.controls=new Controls(all);
+    this.renderer=new Renderer(all);
+    this.HUD=new HUD(all,this.renderer);
     this.frame();
+
+    all.ps.subscribe('login',this.login.bind(this));
   }
-  Game.prototype.register=function(name,value) {
-    this.directory[name]=value;
-    var self=this;
-    value.send=function(to,data) {
-      self.message(name,to,data);
-    };
-  };
-  Game.prototype.lookup=function(name) {
-    return this.directory[name];
-  };
-  Game.prototype.message=function(from,to,data) {
-    this.directory[to].recv(from,data);
-  };
   Game.prototype.frame=function() {
     requestAnimationFrame( this.frame.bind(this) );
     this.renderer.frame();
+  };
+  Game.prototype.login=function(msg,data) {
+    this.all.name=data.name;
+    this.all.token=data.token;
   };
   return Game;
 });

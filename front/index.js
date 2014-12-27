@@ -1,5 +1,7 @@
 var
   config=require('../config.js'),
+  redis=require('redis'),
+  rdcl=redis.createClient(config.redis),
   _=require('lodash'),
   path=require('path'),
   http=require('http'),
@@ -27,7 +29,7 @@ module.exports=function(debug,knex) {
   //POST forms
   app.post('/register',require('./register.js')(knex));
   app.post('/changepass',brute.prevent,require('./changepass.js')(knex));
-  app.post('/auth',brute.prevent,require('./auth.js')(knex));
+  app.post('/auth',brute.prevent,require('./auth.js')(knex,redis,rdcl));
   //listen on both ports
   http.createServer(app).listen(config.front.port);
   debug('listening at %s.',config.front.port);

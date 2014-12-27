@@ -4,8 +4,9 @@ var config=require('../config'),
   rb=Promise.promisify(crypto.randomBytes),
   checkpass=require('./checkpass.js');
 
-module.exports=function(knex) {
-  return function(req, res) {
+module.exports=function(knex,redis,rdcl) {
+  rdcl=Promise.promisifyAll(rdcl);
+  return function(req,res) {
     var body=req.body;
     var feedback;
     //check if name matches pass
@@ -13,9 +14,11 @@ module.exports=function(knex) {
       if(!correct) {
         feedback={token:null};
       } else {
-        //TODO: store token in redis
         return rb(32).then(function(data) {
-          feedback={token:data.toString('base64')};
+          var token=data.toString('base64');
+          feedback={token:token};
+          console.log(token);
+          return rdcl.setexAsync('tokens:'+body.name,60,token);
         });
       }
     }).then(function() {
