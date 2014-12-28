@@ -11,20 +11,21 @@ module.exports=function(knex) {
     //if it's trivially bad, reply back
     if(!feedback[0]) {
       res.send(feedback);
-    } else {
-      //check if name matches pass
-      return checkpass(knex,body.name,body.opass).then(function(correct) {
-        if(!correct) {
-          feedback=[false,'username/old password do not match'];
-        } else {//if it does, update password
-          return hashp(body.pass,config.front.rounds).then(function(hash) {
-            return knex('users').update(
-              {pass:hash,changedpass:knex.raw('now()'),ip:req.ip});
-          });
-        }
-      }).then(function() {
-        res.send(feedback);
-      });
+      return;
     }
+    //check if name matches pass
+    checkpass(knex,body.name,body.opass).then(function(correct) {
+      if(!correct) {
+        feedback=[false,'username/old password do not match'];
+        return;
+      }
+      //if it does, update password
+      return hashp(body.pass,config.front.rounds).then(function(hash) {
+        return knex('users').update(
+          {pass:hash,changedpass:knex.raw('now()'),ip:req.ip});
+        });
+    }).then(function() {
+      res.send(feedback);
+    });
   };
 };
