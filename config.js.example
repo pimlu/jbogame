@@ -23,6 +23,7 @@ config.front.host='127.0.0.1';
 config.front.workers=1;
 config.front.port=1300;
 config.front.rounds=8;
+config.front.tokenl=32;
 config.front.cd={};
 config.front.cd.dir='client';
 config.front.tools=false;

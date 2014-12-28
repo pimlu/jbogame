@@ -35,6 +35,10 @@ define(['./locales/locales'],function(locales) {
     localizer.secondary=secondary;
     if(changed) localizer.trigger();
   };
+  //mostly for debugging purposes
+  localizer.swap=function() {
+    localizer.setlocale(localizer.secondary,localizer.primary);
+  }
   localizer.l2=function(s) {
     return [localizer.getlang(localizer.primary)[s],
       localizer.getlang(localizer.secondary)[s]];

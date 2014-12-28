@@ -1,8 +1,8 @@
-define(['jquery','./dialogs'],function($,dialogs) {
+define(['jquery','./windows'],function($,windows) {
   function HUD(all,renderer) {
     //set up DOM stuff
     this.elem=renderer.elem;
-    this.dialogs=dialogs(all);
+    this.dialogs=windows(all);
     this.overlay=$('<div>').addClass('overlay');
     $(this.elem).append(this.overlay);
     this.logout();
@@ -12,7 +12,6 @@ define(['jquery','./dialogs'],function($,dialogs) {
     //TODO proper dialog removal in general
     $('.ui-dialog-content').dialog('close');
     this.overlay.html('');
-    //this.dialogs.alert('alerttest','lang');
     this.dialogs.plsplay();
   };
   HUD.prototype.login=function(msg,data) {

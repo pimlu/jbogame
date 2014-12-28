@@ -1,10 +1,11 @@
 var config=require('../config'),
   Promise=require('bluebird'),
+  redis=require('redis'),
   crypto=require('crypto'),
   rb=Promise.promisify(crypto.randomBytes),
   checkpass=require('./checkpass.js');
 
-module.exports=function(knex,redis,rdcl) {
+module.exports=function(knex,rdcl) {
   rdcl=Promise.promisifyAll(rdcl);
   var len=config.front.tokenl;
   return function(req,res) {
