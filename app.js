@@ -13,7 +13,7 @@ if(cluster.isMaster) {
   debug=debug('blue','master');
   debug('opening %s proxy workers, %s front workers, '+
   '%s world workers',proxyw,frontw,worldw);
-  require('./dbcheck.js')(knex,debug).then(function() {
+  require('./master/dbcheck.js')(knex,debug).then(function() {
     for(var i=0;i<proxyw+frontw+worldw;i++) {
       cluster.fork();
     }

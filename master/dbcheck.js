@@ -2,11 +2,23 @@ var Promise=require('bluebird');
 
 //make sure database is set up right
 module.exports=function(knex,debug) {
+  function primary(t) {
+    t.increments('id').primary();
+  }
+  function pos(t) {
+    t.double('x');
+    t.double('y');
+    t.double('z');
+  }
+  function foreign(t,table) {
+    t.integer(table.substr(0,table.length-1)+'id')
+    .unsigned().references('id').inTable(table);
+  }
   var tables=[
   {
     name:'users',
     def:function(t) {
-      t.increments('id').primary();
+      primary(t);
       t.string('name',16);
       t.string('pass',60);
       t.timestamp('created').defaultTo(knex.raw('now()'));
@@ -14,48 +26,52 @@ module.exports=function(knex,debug) {
       t.timestamp('lastplayed');
       t.specificType('ip','inet');
     }
-  },
-  {
+  },{
+    name:'owners',
+    def:function(t) {
+      primary(t);
+      foreign(t,'users');
+    }
+  },{
     name:'systems',
     def:function(t) {
-      t.increments('id').primary();
+      primary(t);
       t.string('name',30);
       //ly from origin
-      t.float('x');
-      t.float('y');
-      t.float('z');
+      pos(t);
     }
-  },
-  {
+  },{
     name:'places',
     def:function(t) {
-      t.increments('id').primary();
-      t.integer('systemid').unsigned().references('id').inTable('systems');
+      primary(t);
+      foreign(t,'systems');
       t.string('name',30);
       //m from sun
-      t.float('x');
-      t.float('y');
-      t.float('z');
+      pos(t);
     }
-  },
-  {
+  },{
+    name:'blueprints',
+    def:function(t) {
+      primary(t);
+      t.integer('name',30);
+      t.boolean('station');
+      t.double('armor');
+    }
+  },{
     name:'stations',
     def:function(t) {
-      t.increments('id').primary();
-      t.integer('placeid').unsigned().references('id').inTable('places');
-      t.string('type',30);
+      primary(t);
+      foreign(t,'places');
+      foreign(t,'blueprints');
     }
-  },
-  {
+  },{
     name:'ships',
     def:function(t) {
-      t.increments('id').primary();
-      t.integer('userid').unsigned().references('id').inTable('users');
-      t.integer('stationid').unsigned().references('id').inTable('stations');
+      primary(t);
+      foreign(t,'owners');
+      foreign(t,'stations');
       //m from sun
-      t.float('x');
-      t.float('y');
-      t.float('z');
+      pos(t);
     }
   }
   ];
