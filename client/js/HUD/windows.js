@@ -41,7 +41,8 @@ define(['lodash','jquery','jquery-ui/dialog','./dialogs'],function(_,$,ui,dialog
             _.extend(options,div.o);
             div=div.div;
           }
-          div.dialog(options);
+          div.dialog(options).parents('.ui-dialog')
+            .draggable({snap:true,containment:'parent'});
         }
       })(dialogs[i]);
     }

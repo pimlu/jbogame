@@ -13,6 +13,7 @@ define(['jquery','./windows'],function($,windows) {
     $('.ui-dialog-content').dialog('close');
     this.overlay.html('');
     this.dialogs.plsplay();
+    this.dialogs.attrtest();
   };
   HUD.prototype.login=function(msg,data) {
   };

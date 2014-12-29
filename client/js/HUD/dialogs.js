@@ -7,7 +7,7 @@ define(function() {
     return $('<div>').html(
       inner.replace(/\[\[([^ ]*?)\]\]/g,'<x-t n="$1"></x-t>')
       .replace(/\[\[([^ ]*?) (.*?)\]\]/g,'<x-t n="$1" $2></x-t>')
-      );
+    );
   }
   //html key value pairs
   function kv(o) {
@@ -38,22 +38,23 @@ define(function() {
           var name=d.children('#name').val();
           var qs={name:name,pass:d.children('#pass').val()};
           $.post('/auth',qs).done(function(data) {
-            if(!data.token) return
-              //if it was a success
-              d.dialog('close');
-              all.ps.publish('login.user',{name:name,token:data.token});
-            });
+            console.log(data);
+            if(!data.token) return;
+            //if it was a success
+            d.dialog('close');
+            all.ps.publish('login.user',{name:name,token:data.token});
           });
-          return {
-            div:d,
-            o:{
-              title:'welcome',
-              closeable:false,
-              resizable:false
-            }
-          };
-        },
-      };
-      return dialogs;
+        });
+        return {
+          div:d,
+          o:{
+            title:'welcome',
+            closeable:false,
+            resizable:false
+          }
+        };
+      },
     };
-  });
+    return dialogs;
+  };
+});

@@ -12,10 +12,9 @@ module.exports=function(debug,world,type,port,redis,rdcl) {
   redis=redis||require('redis'),
   rdcl=rdcl||redis.createClient(config.redis);
   var statustime=config.server.statustime,
-    status='green',
-    pop=0;
-  //wnum,status,pop,max,host,port
-  var msg=[world,status,pop,config.server.max,config.server.host,port];
+    status='green';
+  //wnum,status,host,port
+  var msg=[world,status,config.server.host,port];
   function report() {
     msg[1]=status;
     rdcl.publish('world.status',msg.join(','));
@@ -26,8 +25,7 @@ module.exports=function(debug,world,type,port,redis,rdcl) {
   //if the watchdog isn't fed, then warn
   //it has around ~statustime ms of headroom
   var timeout;
-  function reset(newpop) {
-    pop=newpop||0;
+  function reset() {
     status='green';
     clearTimeout(timeout);
     timeout=setTimeout(function() {

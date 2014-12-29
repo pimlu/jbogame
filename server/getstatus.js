@@ -20,7 +20,7 @@ function arreq(a,b) {
 rdcl.subscribe('world.status');
 
 rdcl.on('message',function(channel,message) {
-
+  //happens when a status updates
   function statmsg(world,data) {
     if(!arreq(data,status[world])) {
       exports.change(world,status[world],data);

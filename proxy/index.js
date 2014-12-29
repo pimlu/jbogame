@@ -35,8 +35,8 @@ module.exports=function(debug) {
       var target={};
       //[over]write with a new proxy
       function newprox() {
-        var newhost=newstat[3],
-          newport=+newstat[4];
+        var newhost=newstat[1],
+          newport=+newstat[2];
         debug('new prox for world %s, to %s:%s',wnum,newhost,newport);
         proxies[wnum]=new httpProxy.createProxyServer({
           target:{
