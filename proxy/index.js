@@ -29,16 +29,16 @@ module.exports=function(debug) {
   var getstatus=require('../server/getstatus.js');
   var status=getstatus.status,
     proxies=[];
-  getstatus.change=function(wnum,oldstat,newstat) {
+  getstatus.change=function(id,oldstat,newstat) {
     //if it didn't go down or something
-    if(newstat[0]==='green') {
+    if(newstat.code==='green') {
       var target={};
       //[over]write with a new proxy
       function newprox() {
-        var newhost=newstat[1],
-          newport=+newstat[2];
-        debug('new prox for world %s, to %s:%s',wnum,newhost,newport);
-        proxies[wnum]=new httpProxy.createProxyServer({
+        var newhost=newstat.host,
+          newport=newstat.port;
+        debug('new prox for node %s, to %s:%s',id,newhost,newport);
+        proxies[id]=new httpProxy.createProxyServer({
           target:{
             host:newhost,
             port:newport
@@ -47,35 +47,35 @@ module.exports=function(debug) {
         });
       }
       //if anything doesn't match up, overwrite
-      if(proxies[wnum]) {
-        target=proxies[wnum].options.target
-        if(!newstat[3]===target.host||!newstat[4]===target.port) {
+      if(proxies[id]) {
+        target=proxies[id].options.target
+        if(newstat.host!==target.host||newstat.host!==target.port) {
           newprox();
         }
       } else newprox();
     } else {//if it went down or whatever
-      debug('code %s: prox for world %s is down',newstat[0],wnum);
-      delete proxies[wnum];
+      debug('code %s: prox for node %s is down',newstat.code,id);
+      delete proxies[id];
     }
   }
   function wsroute(req,res,method,head) {
     //capture url groups
-    var capture=/^\/world\/([0-9]+)\/(.*)/.exec(req.url);
-    var wnum=capture[1],qs=capture[2];
+    var capture=/^\/node\/([0-9]+)\/(.*)/.exec(req.url);
+    var id=capture[1],qs=capture[2];
     //route to socket server
-    if(proxies[wnum]) {
+    if(proxies[id]) {
       req.url='/socket.io/'+qs;
-      proxies[wnum][head?'ws':'web'](req,res,head);
+      proxies[id][head?'ws':'web'](req,res,head);
     } else {
       //route doesn't exist, yell what error color
       res.writeHead(502,{'Content-Type':'text/plain'});
-      var info=status[wnum]||['red'];
+      var info=status[id]||['red'];
       res.end(info[0]);
     }
   }
   //right now only cares about frontproxy, may change
   var server = https.createServer(config.proxy.https(),function(req,res) {
-    if(/^\/world\/[0-9]+\//.test(req.url)) {
+    if(/^\/node\/[0-9]+\//.test(req.url)) {
       wsroute(req,res);
     } else {
       frontproxy.web(req,res);

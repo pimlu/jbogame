@@ -27,18 +27,12 @@ config.front.tokenl=32;
 config.front.cd={};
 config.front.cd.dir='client';
 config.front.tools=false;
-var main='./server/index.js';
-config.server.types={
-  'mix':main,
-  'jbo':main,
-  'eng':main
-};
+config.server.makenodes=true;
+config.server.rev=false;
 config.server.host='127.0.0.1';
-config.server.max=2000;
 config.server.statustime=10000;//average time between status reports
 config.server.wdtime=1000;//time before watchdog complains
-config.server.worlds={};
-config.server.worlds[1]=['mix',8081];
+config.server.port=9000;
 config.knex={
   client:'pg',
   connection: {

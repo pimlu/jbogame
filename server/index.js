@@ -1,12 +1,19 @@
 var
   config=require('../config.js'),
+  Promise=require('bluebird'),
   io = require('socket.io')(),
   redis=require('redis'),
-  rdcl=redis.createClient(config.redis);
+  rdcl=Promise.promisifyAll(redis.createClient(config.redis));
 
 var reset;
-module.exports=function(debug,wcfg,knex) {
-  debug('server running %s',JSON.stringify(wcfg));
+module.exports=function(debug,knex) {
+
+  rdcl.incrAsync('nodeid').then(function(id) {
+    setup(debug('cyan','node',id),id,config.server.port+id,knex);
+  });
+};
+function setup(debug,id,port,knex) {
+  debug('server running %s',JSON.stringify(port));
   io.on('connection', function(socket){
     debug('connect');
     socket.on('msg',function(msg) {
@@ -14,11 +21,11 @@ module.exports=function(debug,wcfg,knex) {
       socket.emit('msg','server message');
     });
   });
-  io.listen(wcfg[1]);
-  reset=require('./setstatus.js')(debug,wcfg[2],wcfg[0],wcfg[1],redis,rdcl);
-  setTimeout(loop,500);
-  debug('io listening at %s',wcfg[1]);
-};
+  io.listen(port);
+  debug('io listening at %s',port);
+  reset=require('./setstatus.js')(debug,id,port,rdcl);
+  loop();
+}
 
 function loop() {
   reset();

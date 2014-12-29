@@ -1,7 +1,7 @@
-var Promise=require('bluebird');
+var _=require('lodash');
 
 //make sure database is set up right
-module.exports=function(knex,debug) {
+module.exports=function(debug,knex) {
   function primary(t) {
     t.increments('id').primary();
   }
@@ -25,6 +25,8 @@ module.exports=function(knex,debug) {
       t.timestamp('changedpass');
       t.timestamp('lastplayed');
       t.specificType('ip','inet');
+      //added after
+      //foreign(t,'ships');
     }
   },{
     name:'owners',
@@ -37,6 +39,7 @@ module.exports=function(knex,debug) {
     def:function(t) {
       primary(t);
       t.string('name',30);
+      t.double('loadavg');
       //ly from origin
       pos(t);
     }
@@ -73,19 +76,41 @@ module.exports=function(knex,debug) {
       //m from sun
       pos(t);
     }
+  },
+  //what a mess! this has to reference ships, so it goes after...
+  {
+    name:'users',
+    def:function(t) {
+      foreign(t,'ships');
+    }
   }
   ];
 
   debug('checking tables...');
+  //tables created so far
+  var created={};
   //converts a table definition into a bluebird promise
   function bbtable(o) {
     return knex.schema.hasTable(o.name).then(function(exists) {
-      if(exists) return;
-      debug('%s does not exist, creating...',o.name);
-      //debug(knex.schema.createTable(o.name,o.def).toString());
-      return knex.schema.createTable(o.name,o.def);
+      //we do this silly thing with cmd because if we are adding to the
+      //table, the knex command is different
+      var cmd;
+      if(exists) {
+        if(created[o.name]) {//only add if the table is new
+          debug('adding to %s...',o.name);
+          cmd='table';
+        }
+        else return;
+      } else {
+        debug('%s does not exist, creating...',o.name);
+        cmd='createTable';
+      }
+      created[o.name]=true;
+      //debug(knex.schema[cmd](o.name,o.def).toString());
+      return knex.schema[cmd](o.name,o.def);
     });
   }
+  //start with a base promise
   tables[0]=bbtable(tables[0]);
   //run each promise sequentially
   return tables.reduce(function(l,r) {
@@ -93,5 +118,6 @@ module.exports=function(knex,debug) {
   })
   .then(function() {
     debug('tables all good.');
+    return _.isEmpty(created);
   });
 };

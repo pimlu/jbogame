@@ -1,5 +1,6 @@
 //load up redis
-var config=require('../config.js');
+var config=require('../config.js'),
+  redis=require('redis');
 //fluff up the delay with a bit of randomness
 //this way the statuses aren't all in sync over and over
 function fluff(t,x) {
@@ -8,16 +9,18 @@ function fluff(t,x) {
 
 var nop=function(){};
 
-module.exports=function(debug,world,type,port,redis,rdcl) {
+module.exports=function(debug,id,port,rdcl) {
   redis=redis||require('redis'),
   rdcl=rdcl||redis.createClient(config.redis);
-  var statustime=config.server.statustime,
-    status='green';
-  //wnum,status,host,port
-  var msg=[world,status,config.server.host,port];
+  var statustime=config.server.statustime;
+  var msg={
+    id:id,
+    code:'green',
+    host:config.server.host,
+    port:port
+  };
   function report() {
-    msg[1]=status;
-    rdcl.publish('world.status',msg.join(','));
+    rdcl.publish('node.status',JSON.stringify(msg));
   }
   //report back status periodically
   setInterval(report,fluff(statustime,0.3));
@@ -26,10 +29,10 @@ module.exports=function(debug,world,type,port,redis,rdcl) {
   //it has around ~statustime ms of headroom
   var timeout;
   function reset() {
-    status='green';
+    msg.code='green';
     clearTimeout(timeout);
     timeout=setTimeout(function() {
-      status='yellow';
+      msg.code='yellow';
       report();//report asap
       debug.warn('watchdog not fed! %s',JSON.stringify(msg));
     },config.server.wdtime);
