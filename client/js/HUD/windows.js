@@ -19,6 +19,7 @@ define(['lodash','jquery','jquery-ui/dialog','./dialogs'],function(_,$,ui,dialog
         dialogs[i]=function() {
           var options={
             appendTo:'.overlay',
+            closeOnEscape:false,
             close:function() {
               $(this).dialog('destroy').remove();
             }
@@ -29,7 +30,6 @@ define(['lodash','jquery','jquery-ui/dialog','./dialogs'],function(_,$,ui,dialog
             //if we want scripts to control when it goes away
             if(div.o.closeable===false) {
               delete div.o.closeable;
-              div.o.closeOnEscape=false;
               if(div.o.dialogClass) div.o.dialogClass+=' no-close';
               else div.o.dialogClass='no-close';
             }

@@ -31,17 +31,12 @@ if(cluster.isMaster) {
       sub.quit();
     });
   }
-  require('./master/dbcheck.js')(debug,knex).then(function() {
-    for(var i=0;i<proxyw+frontw;i++) {
-      cluster.fork();
-    }
-    //alright, rev it up
-    if(config.server.rev) {
-      debug('revving now.');
-      //runs immediately because I want to be able to `node rev.js`
-      require('./rev.js');
-    }
-  });
+  for(var i=0;i<proxyw+frontw;i++) {
+    cluster.fork();
+  }
+  if(config.server.rev) {
+    require('./master/rev.js')(debug,knex);
+  }
 } else {
   var id=cluster.worker.id;
   if(id<=proxyw) {

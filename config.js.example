@@ -1,5 +1,12 @@
 var fs=require('fs'),
   path=require('path');
+
+//the essentials
+var proxyw=1,
+  frontw=1,
+  nodes=true,
+  rev=true;
+
 var config = {};
 var dnjoin=config.dnjoin=path.join.bind(path,__dirname);
 config.static=function(app,express) {
@@ -10,7 +17,7 @@ config.static=function(app,express) {
 config.proxy={};//head of everything
 config.front={};//frontend website
 config.server={};//gameservers
-config.proxy.workers=1;
+config.proxy.workers=proxyw;
 config.proxy.port=8080;
 config.proxy.ports=8443;
 config.proxy.https=function() {
@@ -20,15 +27,15 @@ config.proxy.https=function() {
   };
 };
 config.front.host='127.0.0.1';
-config.front.workers=1;
+config.front.workers=frontw;
 config.front.port=1300;
 config.front.rounds=8;
 config.front.tokenl=32;
 config.front.cd={};
 config.front.cd.dir='client';
 config.front.tools=false;
-config.server.makenodes=true;
-config.server.rev=false;
+config.server.makenodes=nodes;
+config.server.rev=rev;
 config.server.host='127.0.0.1';
 config.server.statustime=10000;//average time between status reports
 config.server.wdtime=1000;//time before watchdog complains

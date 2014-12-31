@@ -5,14 +5,14 @@ module.exports=function(debug,knex) {
   function primary(t) {
     t.increments('id').primary();
   }
+  function foreign(t,table,id) {
+    t.integer(id||table.substr(0,table.length-1)+'id')
+    .unsigned().references('id').inTable(table);
+  }
   function pos(t) {
     t.double('x');
     t.double('y');
     t.double('z');
-  }
-  function foreign(t,table) {
-    t.integer(table.substr(0,table.length-1)+'id')
-    .unsigned().references('id').inTable(table);
   }
   var tables=[
   {
@@ -38,9 +38,43 @@ module.exports=function(debug,knex) {
     name:'systems',
     def:function(t) {
       primary(t);
-      t.string('name',30);
+      t.string('name');
       t.double('loadavg');
       //ly from origin
+      pos(t);
+    }
+  },{
+    name:'bodies',
+    def:function(t) {
+      primary(t);
+      t.double('r');//earth radiuses
+      t.boolean('rocky');
+    }
+  },{
+    name:'blueprints',
+    def:function(t) {
+      primary(t);
+      t.integer('name');
+      t.boolean('station');
+      t.double('armor');
+      t.double('shield');
+    }
+  },{
+    name:'ships',
+    def:function(t) {
+      primary(t);
+      foreign(t,'owners');
+      foreign(t,'ships','parent');
+    }
+  },{
+    name:'entities',
+    def:function(t) {
+      primary(t);
+      foreign(t,'systems');
+      t.string('name',30);
+      foreign(t,'blueprints');
+      foreign(t,'owners');
+      //m from sun or whatever
       pos(t);
     }
   },{
@@ -48,33 +82,13 @@ module.exports=function(debug,knex) {
     def:function(t) {
       primary(t);
       foreign(t,'systems');
-      t.string('name',30);
-      //m from sun
+      t.string('name');
+      foreign(t,'places','parentid')
+      t.boolean('orbiting');
+      //m from parent
       pos(t);
-    }
-  },{
-    name:'blueprints',
-    def:function(t) {
-      primary(t);
-      t.integer('name',30);
-      t.boolean('station');
-      t.double('armor');
-    }
-  },{
-    name:'stations',
-    def:function(t) {
-      primary(t);
-      foreign(t,'places');
-      foreign(t,'blueprints');
-    }
-  },{
-    name:'ships',
-    def:function(t) {
-      primary(t);
-      foreign(t,'owners');
-      foreign(t,'stations');
-      //m from sun
-      pos(t);
+      foreign(t,'bodies','bodyid');
+      foreign(t,'entities','entityid');
     }
   },
   //what a mess! this has to reference ships, so it goes after...
@@ -118,6 +132,6 @@ module.exports=function(debug,knex) {
   })
   .then(function() {
     debug('tables all good.');
-    return _.isEmpty(created);
+    return !_.isEmpty(created);
   });
 };
