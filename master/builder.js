@@ -10,19 +10,19 @@ var
 module.exports=function(debug,knex) {
   debug('build');
 
-  function body(system,name,rocky,r,x,y,z,parent) {
+  function body(o) {
     return knex('bodies').returning('id').insert({
-      r:r,
-      rocky:rocky
+      r:o.r,
+      rocky:o.rocky
     }).then(function(bodyid) {
       var columns={
-        systemid:system[0],
-        name:name,
+        systemid:o.system[0],
+        name:o.name,
         orbiting:true,
-        x:x,y:y,z:z,
+        x:o.x,y:o.y,z:o.z,
         bodyid:bodyid[0]
       };
-      if(parent) columns.parentid=parent[0];
+      if(o.parent) columns.parentid=o.parent[0];
       return knex('places').returning('id').insert(columns);
     });
   }
@@ -32,8 +32,21 @@ module.exports=function(debug,knex) {
     loadavg:1,
     x:0,y:0,z:0
   }).then(function(id) {
-    return body(id,'earth',true,re,au,0,0).then(function(bodyid) {
-      return body(id,'moon',true,lr,ld,0,0,bodyid);
+    return body({
+      system:id,
+      name:'earth',
+      rocky:true,
+      r:re,
+      x:au,y:0,z:0
+      }).then(function(bodyid) {
+      return body({
+        system:id,
+        name:'moon',
+        rocky:true,
+        r:lr,
+        x:ld,y:0,z:0,
+        parent:bodyid
+      });
     });
   }).then(function() {
     return knex('systems').returning('id').insert({
@@ -42,6 +55,12 @@ module.exports=function(debug,knex) {
       x:4,y:0,z:0
     });
   }).then(function(id) {
-    body(id,'alpha centauri Ab',true,re*4,au*1.2,0,0);
+    body({
+      system:id,
+      name:'alpha centauri Ab',
+      rocky:true,
+      r:re*4,
+      x:au*1.2,y:0,z:0
+    });
   });
 };
