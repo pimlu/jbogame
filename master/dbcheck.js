@@ -74,6 +74,8 @@ module.exports=function(debug,knex) {
       t.string('name',30);
       foreign(t,'blueprints');
       foreign(t,'owners');
+      
+      foreign(t,'ships');
       //m from sun or whatever
       pos(t);
     }
