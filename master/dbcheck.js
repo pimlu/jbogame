@@ -1,7 +1,10 @@
-var _=require('lodash');
+var _=require('lodash'),
+  tools=require('../knextools.js');
 
 //make sure database is set up right
 module.exports=function(debug,knex) {
+  tools=tools(knex);
+
   function primary(t) {
     t.increments('id').primary();
   }
@@ -54,7 +57,7 @@ module.exports=function(debug,knex) {
     name:'blueprints',
     def:function(t) {
       primary(t);
-      t.integer('name');
+      t.string('name');
       t.boolean('station');
       t.double('armor');
       t.double('shield');
@@ -63,8 +66,6 @@ module.exports=function(debug,knex) {
     name:'ships',
     def:function(t) {
       primary(t);
-      foreign(t,'owners');
-      foreign(t,'ships','parent');
     }
   },{
     name:'entities',
@@ -74,8 +75,8 @@ module.exports=function(debug,knex) {
       t.string('name',30);
       foreign(t,'blueprints');
       foreign(t,'owners');
-      
-      foreign(t,'ships');
+
+      foreign(t,'entities','parent');
       //m from sun or whatever
       pos(t);
     }
@@ -97,7 +98,7 @@ module.exports=function(debug,knex) {
   {
     name:'users',
     def:function(t) {
-      foreign(t,'ships');
+      foreign(t,'entities','ship');
     }
   }
   ];

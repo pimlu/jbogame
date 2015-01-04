@@ -11,7 +11,7 @@ if(!module.parent) {
 
 function rev(debug,knex) {
   return require('./dbcheck.js')(debug,knex).then(function(created) {
-    if(created) return require('./builder.js')(debug,knex);
+    if(created) return require('./builder.js')(debug,knex,require('./architect.js'));
   }).then(function() {
     debug('revving now.');
     var pub=redis.createClient(config.redis);
