@@ -1,7 +1,8 @@
 var config=require('../config.js'),
   _=require('lodash'),
   Promise=require('bluebird'),
-  tools=require('../shared/knexutils.js');
+  tools=require('../shared/knexutils.js'),
+  utils=require('../shared/utils.js');
 
 function foldpromise(fn,o) {
   var keys=_.keys(o);
@@ -11,7 +12,7 @@ function foldpromise(fn,o) {
 }
 
 module.exports=function(debug,knex,data) {
-  data=
+  data=utils.oclone(data);
   tools=tools(knex);
   debug('running build script...');
 
@@ -45,11 +46,10 @@ module.exports=function(debug,knex,data) {
       return function rec(name,o) {
         var isbody='r' in o,
           isstation='blueprint' in o;
-        //stub promise to add things onto
+        
         var p=Promise.resolve();
-        //if it has a radius- ie, it is a planet
+        //add rows to specific tables based on type
         if(isbody) {
-          //make a body for it
           p=p.then(function() {
             return tools.idins('bodies',{
               r:o.r,
@@ -57,8 +57,7 @@ module.exports=function(debug,knex,data) {
             });
           });
           o.orbiting=true;
-        } else if(isstation) {//else if it's a station
-          //make an entity for it
+        } else if(isstation) {
           p=p.then(function() {
             return tools.idins('entities',{
               systemid:systemid,

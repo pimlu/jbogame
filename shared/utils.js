@@ -123,10 +123,15 @@
       if(!x[x.length-1][0]) x.pop();
       x.forEach(function(i){e.css(i[0],i[1]);});
     }
+    //object deep clone- only clones generic JS objects
+    function oclone(o) {
+      return JSON.parse(JSON.stringify(o));
+    }
     return {
       LinkedList:LinkedList,
       Queue:Queue,
-      applycss:applycss
+      applycss:applycss,
+      oclone:oclone
     };
   }
 })();

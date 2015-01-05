@@ -18,7 +18,8 @@
     "redis": "^0.12.1",
     "seedrandom": "^2.3.11",
     "socket.io": "^1.2.1",
-    "socket.io-client": "^1.2.1"
+    "socket.io-client": "^1.2.1",
+    "then-redis": "^1.2.2"
   },
   "scripts": {
     "test": "echo test",

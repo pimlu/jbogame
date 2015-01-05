@@ -1,9 +1,6 @@
-
+var _=require('lodash');
 module.exports=function(debug,nodes,data) {
   var plan=[];
-  plan.length=1;//first spot is undefined
-  for(var i=1;i<=nodes;i++) {
-    plan.push([i]);
-  }
+  plan[1]=[1,2];
   return plan;
 }

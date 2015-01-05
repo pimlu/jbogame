@@ -30,7 +30,7 @@ module.exports=function(debug,knex) {
   app.post('/register',require('./register.js')(knex));
   app.post('/changepass',brute.prevent,require('./changepass.js')(knex));
   app.post('/auth',brute.prevent,require('./auth.js')(knex,rdcl));
-  //listen on both ports
+  
   http.createServer(app).listen(config.front.port);
   debug('listening at %s.',config.front.port);
 };
