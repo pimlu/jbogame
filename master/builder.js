@@ -1,7 +1,7 @@
 var config=require('../config.js'),
   _=require('lodash'),
   Promise=require('bluebird'),
-  tools=require('../knextools.js');
+  tools=require('../shared/knexutils.js');
 
 function foldpromise(fn,o) {
   var keys=_.keys(o);
@@ -11,12 +11,13 @@ function foldpromise(fn,o) {
 }
 
 module.exports=function(debug,knex,data) {
+  data=
   tools=tools(knex);
   debug('running build script...');
 
   function makebp(bps) {
     function bp(name,o) {
-      return knex('blueprints').returning('id').insert({
+      return tools.idins('blueprints',{
         name:name,
         station:o.station||false,
         armor:o.armor,
@@ -29,7 +30,7 @@ module.exports=function(debug,knex,data) {
     //top level, gets called for each system. inserts data, then calls place
     //on all of system.places, which has planets, stations, etc.
     function system(name,o) {
-      return knex('systems').returning('id').insert({
+      return tools.idins('systems',{
         name:name,
         loadavg:o.loadavg,
         x:o.pos[0],y:o.pos[1],z:o.pos[2]
@@ -50,7 +51,7 @@ module.exports=function(debug,knex,data) {
         if(isbody) {
           //make a body for it
           p=p.then(function() {
-            return knex('bodies').returning('id').insert({
+            return tools.idins('bodies',{
               r:o.r,
               rocky:o.rocky
             });
@@ -59,7 +60,7 @@ module.exports=function(debug,knex,data) {
         } else if(isstation) {//else if it's a station
           //make an entity for it
           p=p.then(function() {
-            return knex('entities').returning('id').insert({
+            return tools.idins('entities',{
               systemid:systemid,
               name:name,
               blueprintid:tools.subq(knex('blueprints').select('id').where('name',o.blueprint)),

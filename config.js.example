@@ -5,7 +5,7 @@ var fs=require('fs'),
 var proxyw=1,
   frontw=1,
   nodes=true,
-  rev=true;
+  rev=5000;//if this is truthy, we rev and wait this long to allocate nodes
 
 var config = {};
 var dnjoin=config.dnjoin=path.join.bind(path,__dirname);

@@ -35,7 +35,7 @@ if(cluster.isMaster) {
     cluster.fork();
   }
   if(config.server.rev) {
-    require('./master/rev.js')(debug,knex);
+    require('./master/rev.js')(knex);
   }
 } else {
   var id=cluster.worker.id;

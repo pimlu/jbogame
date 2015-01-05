@@ -1,5 +1,5 @@
 var _=require('lodash'),
-  tools=require('../knextools.js');
+  tools=require('../shared/knexutils.js');
 
 //make sure database is set up right
 module.exports=function(debug,knex) {

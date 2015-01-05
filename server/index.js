@@ -3,17 +3,26 @@ var
   Promise=require('bluebird'),
   io = require('socket.io')(),
   redis=require('redis'),
+  sub=redis.createClient(config.redis),
   rdcl=Promise.promisifyAll(redis.createClient(config.redis));
 
 var reset;
 module.exports=function(debug,knex) {
-
+  //when we receive our unique ID...
   rdcl.incrAsync('nodeid').then(function(id) {
-    setup(debug('cyan','node',id),id,config.server.port+id,knex);
+    //subscribe to that ID's rev channel...
+    sub.subscribe('rev.'+id);
+    //TODO use promise. having some weird problem with errors. then-redis time?
+    sub.on('message',function(channel,plan) {
+      //so we receive the plan with our systems when rev finishes
+      setup(debug('cyan','node',id),knex,
+        config.server.port+id,id,JSON.parse(plan));
+    });
   });
 };
-function setup(debug,id,port,knex) {
+function setup(debug,knex,port,id,plan) {
   debug('server running %s',JSON.stringify(port));
+  debug('I am responsible for %s',JSON.stringify(plan));
   io.on('connection', function(socket){
     debug('connect');
     socket.on('msg',function(msg) {
