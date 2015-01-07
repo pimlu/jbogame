@@ -1,8 +1,8 @@
 //load up redis
 var config=require('../config.js'),
   _=require('lodash'),
-  redis=require('redis'),
-  rdcl=redis.createClient(config.redis);
+  redis=require('then-redis'),
+  rdcl=config.rdcl(redis);
 
 var status=[];
 var timeouts=[];

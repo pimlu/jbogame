@@ -37,7 +37,7 @@ module.exports=function(debug) {
       function newprox() {
         var newhost=newstat.host,
           newport=newstat.port;
-        debug('new prox for node %s, to %s:%s',id,newhost,newport);
+        debug('new prox for system %s, to %s:%s',id,newhost,newport);
         proxies[id]=new httpProxy.createProxyServer({
           target:{
             host:newhost,
@@ -54,17 +54,15 @@ module.exports=function(debug) {
         }
       } else newprox();
     } else {//if it went down or whatever
-      debug('code %s: prox for node %s is down',newstat.code,id);
+      debug('code %s: prox for system %s is down',newstat.code,id);
       delete proxies[id];
     }
   }
   function wsroute(req,res,method,head) {
-    //capture url groups
-    var capture=/^\/node\/([0-9]+)\/(.*)/.exec(req.url);
-    var id=capture[1],qs=capture[2];
+    //get the system name
+    var id=/^\/system\/([a-zA-Z0-9_]+)/.exec(req.url)[1];
     //route to socket server
     if(proxies[id]) {
-      req.url='/socket.io/'+qs;
       proxies[id][head?'ws':'web'](req,res,head);
     } else {
       //route doesn't exist, yell what error color
@@ -73,9 +71,9 @@ module.exports=function(debug) {
       res.end(info[0]);
     }
   }
-  //right now only cares about frontproxy, may change
+
   var server = https.createServer(config.proxy.https(),function(req,res) {
-    if(/^\/node\/[0-9]+\//.test(req.url)) {
+    if(/^\/system\/[a-zA-Z0-9_]+/.test(req.url)) {
       wsroute(req,res);
     } else {
       frontproxy.web(req,res);

@@ -1,34 +1,41 @@
 var
   config=require('./config.js'),
   _=require('lodash'),
-  redis=require('redis'),
+  redis=require('then-redis'),
   knex=require('knex')(config.knex),
   cluster = require('cluster'),
   debug=require('./debug.js');
 
 var proxyw=config.proxy.workers,
-  frontw=config.front.workers,
-  nodew=config.server.workers;
+  frontw=config.front.workers;
 
 if(cluster.isMaster) {
   debug=debug('blue','master');
 
-  //only make node workers if we're a node server
-  nodew=config.server.makenodes?require('os').cpus().length:0;
-  debug('opening %s proxy workers, %s front workers (%s nodes)'
-  ,proxyw,frontw,nodew);
+  cores=require('os').cpus().length;
+  debug('opening %s proxy workers, %s front workers (makenodes: %s)',
+    proxyw,frontw,config.server.makenodes);
 
   //listen for revving, and then make nodes on command
   if(config.server.makenodes) {
-    var sub=redis.createClient(config.redis);
+    var sub=config.rdcl(redis).bbmsg(),
+      rdcl=config.rdcl(redis),
+      machid;
 
-    sub.subscribe('node.rev');
-    sub.on('message',function(channel,message) {
-      debug('rev received.  spawning %s nodes',nodew);
-      for(var i=0;i<nodew;i++) {
-        cluster.fork();
-      }
-      sub.quit();
+    //grabs machine id, reports cores for that id, waits for plan, grabs plan
+    sub('machine.rev').then(function(message) {
+      debug('rev received. incr machineid');
+      return rdcl.incr('machineid');
+    }).then(function(id) {
+      machid=id;
+      debug('id is %s',id);
+      rdcl.set('machine:'+id+':cores',cores);
+      return sub('machine.plan');
+    }).then(function() {
+      return rdcl.smembers('machine:'+machid+':plan');
+    }).then(function(plan) {
+      debug('I am responsible for %s',plan);
+      for(i in plan) cluster.fork({zdelu_system:plan[i]});
     });
   }
   for(var i=0;i<proxyw+frontw;i++) {
@@ -47,6 +54,6 @@ if(cluster.isMaster) {
     require('./front')(debug,knex);
   } else {
     //use the appropriate script to run the gameserver
-    require('./server')(debug,knex);
+    require('./server')(debug,knex,id);
   }
 }

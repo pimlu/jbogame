@@ -1,5 +1,6 @@
 var fs=require('fs'),
-  path=require('path');
+  path=require('path'),
+  Promise=require('bluebird');
 
 //the essentials
 var proxyw=1,
@@ -48,10 +49,32 @@ config.knex={
     database:'jbogame'
   }
 };
-config.redis={
-  host:'127.0.0.1',
-  port:6379,
-  options:{}
+config.rdcl=function(redis) {
+  var rdcl=redis.createClient(
+    {
+      host:'127.0.0.1',
+      port:6379,
+      options:{}
+    });
+  //bluebird promise for one-time sub events
+  //caution, don't make a promise for a channel that hasn't been settled yet
+  rdcl.bbmsg=function() {
+    var channels={};
+    this.on('message',function(channel,message) {
+      if(channel in channels) channels[channel](message);
+      delete channels[channel];
+    });
+    var self=this;
+    function sub(channel) {
+      self.subscribe(channel);
+      return new Promise(function(resolve) {
+        channels[channel]=resolve;
+      })
+    };
+    sub.quit=this.quit.bind(this);
+    return sub;
+  }
+  return rdcl;
 };
 config.brute=function() {
   // stores state locally, don't use this in production

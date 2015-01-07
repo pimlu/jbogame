@@ -1,6 +1,6 @@
 //load up redis
 var config=require('../config.js'),
-  redis=require('redis');
+  redis=require('then-redis');
 //fluff up the delay with a bit of randomness
 //this way the statuses aren't all in sync over and over
 function fluff(t,x) {
@@ -10,11 +10,10 @@ function fluff(t,x) {
 var nop=function(){};
 
 module.exports=function(debug,id,port,rdcl) {
-  redis=redis||require('redis'),
-  rdcl=rdcl||redis.createClient(config.redis);
+  rdcl=rdcl||config.rdcl(redis);
   var statustime=config.server.statustime;
   var msg={
-    id:id,
+    id:id.replace(/ /g,'_'),
     code:'green',
     host:config.server.host,
     port:port
@@ -38,6 +37,6 @@ module.exports=function(debug,id,port,rdcl) {
     },config.server.wdtime);
   }
   reset();
-  report();
+  setTimeout(report,1000);
   return reset;
 };

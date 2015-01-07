@@ -5,7 +5,7 @@ var config=require('../config.js'),
   utils=require('../shared/utils.js');
 
 function foldpromise(fn,o) {
-  var keys=_.keys(o);
+  var keys=Object.keys(o);
   return keys.reduce(function(l,r) {
     return l.then(fn.bind(null,r,o[r]));
   },Promise.resolve());
@@ -46,7 +46,7 @@ module.exports=function(debug,knex,data) {
       return function rec(name,o) {
         var isbody='r' in o,
           isstation='blueprint' in o;
-        
+
         var p=Promise.resolve();
         //add rows to specific tables based on type
         if(isbody) {
