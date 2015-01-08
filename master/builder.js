@@ -59,7 +59,7 @@ module.exports=function(debug,knex,data) {
           o.orbiting=true;
         } else if(isstation) {
           p=p.then(function() {
-            return tools.idins('entities',{
+            return tools.idins('ents',{
               systemid:systemid,
               name:name,
               blueprintid:tools.subq(knex('blueprints').select('id').where('name',o.blueprint)),
@@ -77,10 +77,12 @@ module.exports=function(debug,knex,data) {
             x:o.pos[0],y:o.pos[1],z:o.pos[2]
           };
           if(isbody) columns.bodyid=id;
-          else if(isstation) columns.entityid=id;
+          else if(isstation) columns.entid=id;
           if(o.parent) columns.parentid=o.parent[0];
           return knex('places').returning('id').insert(columns);
         });
+
+        if(!('places' in o)) return;
         //now do the same recursively onto the children
         return p.then(function(parent) {
           return foldpromise(function(name,o) {

@@ -1,10 +1,12 @@
 var
-  config=require('../config.js');
+  config=require('../config.js'),
+  tools=require('../shared/knexutils.js'),
   Promise=require('bluebird'),
   bcrypt=require('bcrypt'),
   hashp=Promise.promisify(bcrypt.hash);
 var validateuser=require('./shared/validuser.js');
 module.exports=function(knex) {
+  tools=tools(knex);
   return function(req, res) {
     var body=req.body;
     var feedback=validateuser(body.name,body.pass,body.pass2);
@@ -21,7 +23,8 @@ module.exports=function(knex) {
       }
       //if it doesn't, hash and insert
       return hashp(body.pass,config.front.rounds).then(function(hash) {
-        return knex('users').insert({name:body.name,pass:hash,ip:req.ip});
+        return knex('users').insert({name:body.name,pass:hash,ip:req.ip,
+          entid:tools.subq(knex('ents').select('id').where('name','iss 2'))});
       });
     }).then(function(){
       res.send(feedback);

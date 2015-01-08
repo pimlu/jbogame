@@ -63,12 +63,7 @@ module.exports=function(debug,knex) {
       t.double('shield');
     }
   },{
-    name:'ships',
-    def:function(t) {
-      primary(t);
-    }
-  },{
-    name:'entities',
+    name:'ents',
     def:function(t) {
       primary(t);
       foreign(t,'systems');
@@ -76,7 +71,7 @@ module.exports=function(debug,knex) {
       foreign(t,'blueprints');
       foreign(t,'owners');
 
-      foreign(t,'entities','parent');
+      foreign(t,'ents','parent');
       //m from sun or whatever
       pos(t);
     }
@@ -91,14 +86,14 @@ module.exports=function(debug,knex) {
       //m from parent
       pos(t);
       foreign(t,'bodies','bodyid');
-      foreign(t,'entities','entityid');
+      foreign(t,'ents');
     }
   },
-  //what a mess! this has to reference ships, so it goes after...
+  //what a mess! this has to reference ents, so it goes after...
   {
     name:'users',
     def:function(t) {
-      foreign(t,'entities','ship');
+      foreign(t,'ents');
     }
   }
   ];

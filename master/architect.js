@@ -3,8 +3,8 @@ var
 au=149597870700,//m
 pc=3.26163344,//ly
 re=6378100,//m
-ld=384400*1000,//m
-lr=1737.10*1000;//m
+ld=384400e3,//m
+lr=1737.10e3;//m
 
 module.exports={
   blueprints:{
@@ -28,6 +28,10 @@ module.exports={
           r:re,
           pos:[au,0,0],
           places:{
+            'iss 2':{
+              blueprint:'stationtest',
+              pos:[0,-re-431e3,0]
+            },
             moon:{
               rocky:true,
               r:lr,
@@ -51,7 +55,7 @@ module.exports={
           r:re*4,
           pos:[au*1.2,0,0],
           places:{
-            'ISS 2':{
+            'alpha station':{
               blueprint:'stationtest',
               pos:[0,ld,0]
             }
