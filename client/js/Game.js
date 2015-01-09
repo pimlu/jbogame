@@ -19,7 +19,7 @@ function(ps,Controls,Renderer,HUD) {
     this.renderer=new Renderer(all);
     this.HUD=new HUD(all,this.renderer);
     this.frame();
-
+    
     all.ps.subscribe('login',this.login.bind(this));
   }
   Game.prototype.frame=function() {
@@ -27,8 +27,8 @@ function(ps,Controls,Renderer,HUD) {
     this.renderer.frame();
   };
   Game.prototype.login=function(msg,data) {
-    this.all.name=data.name;
-    this.all.token=data.token;
+    console.log(data);
+    for(i in data) all[i]=data[i];
   };
   return Game;
 });

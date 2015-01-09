@@ -44,9 +44,6 @@ while getopts ":hipd:rb:as:" opt; do case $opt in
 
     npm install
     sudo -u $SUDO_USER bower install
-    SOCKPATH=components/socket.io.js
-    [ -e $SOCKPATH ] || \
-      sudo -u $SUDO_USER cp node_modules/socket.io-client/socket.io.js $SOCKPATH
     ;;
   p)
     apt-get install -y postgresql postgresql-contrib ;;

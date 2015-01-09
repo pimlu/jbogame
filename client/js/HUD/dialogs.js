@@ -38,11 +38,11 @@ define(function() {
           var name=d.children('#name').val();
           var qs={name:name,pass:d.children('#pass').val()};
           $.post('/auth',qs).done(function(data) {
-            console.log(data);
             if(!data.token) return;
+            data.name=name;
             //if it was a success
             d.dialog('close');
-            all.ps.publish('login.user',{name:name,token:data.token});
+            all.ps.publish('login.user',data);
           });
         });
         return {

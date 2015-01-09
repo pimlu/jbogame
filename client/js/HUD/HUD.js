@@ -9,11 +9,10 @@ define(['jquery','./windows'],function($,windows) {
     all.ps.subscribe('login',this.login.bind(this));
   }
   HUD.prototype.logout=function() {
-    //TODO proper dialog removal in general
     $('.ui-dialog-content').dialog('close');
     this.overlay.html('');
     this.dialogs.plsplay();
-    this.dialogs.attrtest();
+    //this.dialogs.attrtest();
   };
   HUD.prototype.login=function(msg,data) {
   };

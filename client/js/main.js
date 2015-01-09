@@ -8,7 +8,7 @@ require.config({
     jquery:'./lib/jquery/dist/jquery.min',
     'jquery-ui':'./lib/jquery-ui/ui',
     three:'./lib/threejs/build/three.min',
-    socketio:'./lib/socket.io'
+    socketio:'./lib/socket.io-client/socket.io'
   },
   shim:{
     three:{exports:'THREE'}
