@@ -6,7 +6,7 @@ define(['jquery','./windows'],function($,windows) {
     this.overlay=$('<div>').addClass('overlay');
     $(this.elem).append(this.overlay);
     this.logout();
-    all.ps.subscribe('login',this.login.bind(this));
+    all.ps.subscribe('auth',this.auth.bind(this));
   }
   HUD.prototype.logout=function() {
     $('.ui-dialog-content').dialog('close');
@@ -14,7 +14,7 @@ define(['jquery','./windows'],function($,windows) {
     this.dialogs.plsplay();
     //this.dialogs.attrtest();
   };
-  HUD.prototype.login=function(msg,data) {
+  HUD.prototype.auth=function(msg,data) {
   };
   return HUD;
 });

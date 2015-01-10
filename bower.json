@@ -22,7 +22,6 @@
     "lodash": "~2.4.1",
     "es5-shim": "~4.0.5",
     "es6-shim": "~0.22.1",
-    "pubsub-js": "~1.5.0",
-    "socket.io-client": "~1.2.1"
+    "pubsub-js": "~1.5.0"
   }
 }

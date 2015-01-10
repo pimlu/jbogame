@@ -1,4 +1,4 @@
-define(['pubsub','Controls','Renderer','HUD/HUD'],
+define(['pubsub','Controls','Renderer','HUD/HUD','handshake'],
 function(ps,Controls,Renderer,HUD) {
   function Game(o) {
     var defaults={
@@ -19,16 +19,18 @@ function(ps,Controls,Renderer,HUD) {
     this.renderer=new Renderer(all);
     this.HUD=new HUD(all,this.renderer);
     this.frame();
-    
-    all.ps.subscribe('login',this.login.bind(this));
+
+    all.ps.subscribe('auth',this.auth.bind(this));
   }
   Game.prototype.frame=function() {
     requestAnimationFrame( this.frame.bind(this) );
     this.renderer.frame();
   };
-  Game.prototype.login=function(msg,data) {
+  Game.prototype.auth=function(msg,data) {
     console.log(data);
+    var all=this.all;
     for(i in data) all[i]=data[i];
+    handshake(all);
   };
   return Game;
 });
