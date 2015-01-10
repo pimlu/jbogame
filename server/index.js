@@ -19,7 +19,7 @@ module.exports=function(debug,knex,id) {
     res.writeHead(200);
     res.end(system);
   }
-  var doorman=require('doorman')(debug,knex,rdcl,system);
+  var doorman=require('./doorman.js')(debug,knex,rdcl,app,system);
 
   app.on('listening',function() {
     debug('app listening at %s',port);

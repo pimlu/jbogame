@@ -1,1 +1,4 @@
-var config={};
+define([],function() {
+  var config={};
+  return config;
+});

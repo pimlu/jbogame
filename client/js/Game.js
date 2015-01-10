@@ -1,17 +1,21 @@
-define(['pubsub','Controls','Renderer','HUD/HUD','handshake'],
-function(ps,Controls,Renderer,HUD) {
+define(['Controls','Renderer','HUD/HUD','handshake'],
+function(Controls,Renderer,HUD,handshake) {
   function Game(o) {
     var defaults={
       directory:{},
       res:{x:800,y:600},
-      debug:false
+      debug:true
     };
     for(var i in defaults) this[i]=defaults[i];
     for(var i in o) this[i]=o[i];
+
+    if(this.debug) {
+      console.log('debug');
+    }
+
     //important information to give to every component
     var all=this.all={
       game:this,
-      ps:ps,
       res:this.res,
       debug:this.debug
     };
@@ -19,18 +23,17 @@ function(ps,Controls,Renderer,HUD) {
     this.renderer=new Renderer(all);
     this.HUD=new HUD(all,this.renderer);
     this.frame();
-
-    all.ps.subscribe('auth',this.auth.bind(this));
   }
   Game.prototype.frame=function() {
     requestAnimationFrame( this.frame.bind(this) );
-    this.renderer.frame();
+    //this.renderer.frame();
   };
-  Game.prototype.auth=function(msg,data) {
+  //gets called by the login dialog
+  Game.prototype.auth=function(data) {
     console.log(data);
     var all=this.all;
     for(i in data) all[i]=data[i];
-    handshake(all);
+    handshake(data);
   };
   return Game;
 });

@@ -37,6 +37,6 @@ module.exports=function(debug,id,port,rdcl) {
     },config.server.wdtime);
   }
   reset();
-  setTimeout(report,1000);
+  report();
   return reset;
 };

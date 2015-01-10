@@ -42,7 +42,7 @@ define(function() {
             data.name=name;
             //if it was a success
             d.dialog('close');
-            all.ps.publish('auth.user',data);
+            all.game.auth(data);
           });
         });
         return {

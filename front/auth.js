@@ -29,7 +29,7 @@ module.exports=function(knex,rdcl) {
         );
       });
     }).then(function(sysname) {
-      feedback.system=sysname[0].name;
+      if(sysname!=undefined) feedback.system=sysname[0].name;
       res.send(feedback);
     });
   };

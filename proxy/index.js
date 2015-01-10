@@ -58,17 +58,24 @@ module.exports=function(debug) {
       delete proxies[id];
     }
   }
-  function wsroute(req,res,method,head) {
+  function wsroute(req,res,head) {
     //get the system name
     var id=/^\/system\/([a-zA-Z0-9_]+)/.exec(req.url)[1];
     //route to socket server
     if(proxies[id]) {
-      proxies[id][head?'ws':'web'](req,res,head);
+      var method=head?'ws':'web';
+      proxies[id][method](req,res,head);
     } else {
       //route doesn't exist, yell what error color
-      res.writeHead(502,{'Content-Type':'text/plain'});
-      var info=status[id]||['red'];
-      res.end(info[0]);
+      if('writeHead' in res) {
+        res.writeHead(502,{'Content-Type':'text/plain'});
+        var info=status[id]||['red'];
+        res.end(info[0]);
+      } else {
+        //this happens if we get some direct ws connection to a bad route
+        //and res is a cleartextStream
+        res.end();
+      }
     }
   }
 
