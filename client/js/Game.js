@@ -26,7 +26,7 @@ function(Controls,Renderer,HUD,handshake) {
   }
   Game.prototype.frame=function() {
     requestAnimationFrame( this.frame.bind(this) );
-    //this.renderer.frame();
+    this.renderer.frame();
   };
   //gets called by the login dialog
   Game.prototype.auth=function(data) {

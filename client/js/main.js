@@ -8,10 +8,13 @@ require.config({
     jquery:'./lib/jquery/dist/jquery.min',
     'jquery-ui':'./lib/jquery-ui/ui',
     three:'./lib/threejs/build/three.min',
-    socketio:'./lib/socket.io-client/socket.io'
+    bson:'./lib/bson/browser_build/bson',
+    reified:'./lib/reified-browser'
   },
   shim:{
-    three:{exports:'THREE'}
+    three:{exports:'THREE'},
+    bson:{exports:'bson'},
+    reified:{exports:'reified'}
   }
 });
 require(['Game','localizer'],function(Game,l) {

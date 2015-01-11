@@ -4,7 +4,7 @@ DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 cd $DIR
 function helpmsg {
-  echo "  usage: ./setup.sh [OPTIONS]
+  echo "  usage: sudo ./setup.sh [OPTIONS]
 
   OPTIONS
   -------
@@ -17,9 +17,11 @@ function helpmsg {
   -b <intf>: tells redis to bind to <intf>
   -a: sets up trust-based auth in postgres
   -s <fqdn>: creates a self-signed cert for you with commonName <fqdn>"
+  [ $# != 0 ] && echo `tput bold`$1`tput sgr0`
   exit 1
 }
-if [ $# == 0 ]; then helpmsg; fi
+[ $# == 0 ] && helpmsg
+! [ $(id -u) = 0 ] && helpmsg "this script requires root."
 while getopts ":hipd:rb:as:" opt; do case $opt in
   h)
     helpmsg ;;
@@ -44,6 +46,10 @@ while getopts ":hipd:rb:as:" opt; do case $opt in
 
     npm install
     sudo -u $SUDO_USER bower install
+
+    REIFIEDPATH=components/reified-browser.js
+    [ -e $REIFIEDPATH ] || \
+      sudo -u $SUDO_USER cp node_modules/reified/reified-browser.js $REIFIEDPATH
     ;;
   p)
     apt-get install -y postgresql postgresql-contrib ;;

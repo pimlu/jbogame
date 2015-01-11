@@ -1,20 +1,22 @@
 (function() {
-  var server;
+  var server,BSON;
   if(typeof define==='function') {
     server=false;
-    define(function(){return WSConnect});
+    define(['bson'],function(bson_) {
+      BSON=bson_().BSON;
+      return WSConnect;
+      });
   } else if(typeof module==='object') {
     server=true;
+    BSON=require('bson').BSONPure.BSON;
     module.exports=WSConnect;
   }
   function WSConnect(ws) {
     this.ws=ws;
   }
-  WSConnect.prototype.rel=function(msg) {
-    this.ws.send(msg);
-  };
-  WSConnect.prototype.urel=function(msg) {
-    this.ws.send(msg);
+  WSConnect.prototype.rel=WSConnect.prototype.urel=function(msg,ack) {
+    if(typeof msg==='object') msg=BSON.serialize(msg,false,true,false);
+    this.ws.send(msg,ack);
   };
   WSConnect.prototype.close=function() {
     this.ws.close();
@@ -22,7 +24,17 @@
   WSConnect.prototype.onopen=function(cb) {
     this.ws.onopen=cb;
   };
+  WSConnect.prototype.onclose=function(cb) {
+    this.ws.onclose=cb;
+  };
+  WSConnect.prototype.onerror=function(cb) {
+    this.ws.onerror=cb;
+  };
   WSConnect.prototype.onmessage=function(cb) {
-    this.ws.onmessage=cb;
+    lolws=this.ws;
+    this.ws.onmessage=function(e) {
+      if(typeof e.data!=='string') return cb(BSON.deserialize(e.data));
+      return cb(e.data);
+    };
   };
 })();
