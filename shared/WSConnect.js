@@ -18,8 +18,8 @@
     if(typeof msg==='object') msg=BSON.serialize(msg,false,true,false);
     this.ws.send(msg,ack);
   };
-  WSConnect.prototype.close=function() {
-    this.ws.close();
+  WSConnect.prototype.close=function(reason) {
+    this.ws.close(1000,reason);
   };
   WSConnect.prototype.onopen=function(cb) {
     this.ws.onopen=cb;
@@ -31,10 +31,12 @@
     this.ws.onerror=cb;
   };
   WSConnect.prototype.onmessage=function(cb) {
-    lolws=this.ws;
     this.ws.onmessage=function(e) {
       if(typeof e.data!=='string') return cb(BSON.deserialize(e.data));
       return cb(e.data);
     };
   };
+  if(server) WSConnect.prototype.ip=function() {
+    return this.ws.upgradeReq.headers['x-forwarded-for'];
+  }
 })();

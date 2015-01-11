@@ -31,7 +31,7 @@ rdcl.on('message',function(channel,message) {
       timeouts[id]=setTimeout(function() {
         var newmsg=_.cloneDeep(message);
         newmsg.code='red';
-        statmsg(node,newmsg);
+        statmsg(id,newmsg);
       },config.server.statustime*2);
       break;
   }

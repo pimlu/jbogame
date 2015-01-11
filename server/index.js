@@ -11,6 +11,7 @@ module.exports=function(debug,knex,id) {
 
   system=process.env.zdelu_system;
   debug=debug('cyan',system);
+  process.title=system.replace(/ /g,'-');
 
   var app=http.createServer(handler),
     port=config.server.port+id;
@@ -19,7 +20,12 @@ module.exports=function(debug,knex,id) {
     res.writeHead(200);
     res.end(system);
   }
-  var doorman=require('./doorman.js')(debug,knex,rdcl,app,system);
+  var doorman=require('./doorman.js')(debug,knex,rdcl,app,system,connect);
+
+  function connect(user,ws) {
+    debug(require('util').inspect(user));
+    ws.rel('connect');
+  }
 
   app.on('listening',function() {
     debug('app listening at %s',port);

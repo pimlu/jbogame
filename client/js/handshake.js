@@ -6,10 +6,13 @@ define(['WSClient'],function(WSClient) {
 
     ws.onopen(function() {
       console.log('open');
-      ws.rel(data);
+      ws.rel({id:data.id,token:data.token});
     });
     ws.onmessage(function(msg) {
-      
+      console.log(msg);
+    });
+    ws.onclose(function(e) {
+      console.log('close',e);
     });
   }
   return handshake;

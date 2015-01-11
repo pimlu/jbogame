@@ -21,15 +21,18 @@ module.exports=function(knex,rdcl) {
       return rb(len).then(function(data) {
         var token=data.toString('base64');
         feedback={id:user.id,token:token};
-        return rdcl.setex('tokens:'+body.name,60,token);
+        return rdcl.setex('user:'+user.id+':token',10,token);
       }).then(function() {
         //get the system the user's in from his current ent
         return knex('systems').select('name').where('id',
           tools.subq(knex('ents').select('systemid').where('id',user.entid))
-        );
+        ).then(function(sysname) {
+          feedback.system=sysname[0].name;
+          //this one's mostly for convenience
+          return rdcl.setex('user:'+user.id+':system',10,feedback.system);
+        });
       });
-    }).then(function(sysname) {
-      if(sysname!=undefined) feedback.system=sysname[0].name;
+    }).then(function() {
       res.send(feedback);
     });
   };

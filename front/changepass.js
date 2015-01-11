@@ -22,7 +22,8 @@ module.exports=function(knex) {
       //if it does, update password
       return hashp(body.pass,config.front.rounds).then(function(hash) {
         return knex('users').update(
-          {pass:hash,changedpass:knex.raw('now()'),ip:req.ip});
+          {pass:hash,changedpass:knex.raw('now()'),ip:req.ip})
+          .where('name',body.name);
         });
     }).then(function() {
       res.send(feedback);

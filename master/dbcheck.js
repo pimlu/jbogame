@@ -28,6 +28,7 @@ module.exports=function(debug,knex) {
       t.timestamp('changedpass');
       t.timestamp('lastplayed');
       t.specificType('ip','inet');
+      t.specificType('lastip','inet');
       //added after
       //foreign(t,'ships');
     }
