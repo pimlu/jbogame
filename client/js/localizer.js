@@ -24,7 +24,9 @@ define(['./locales/locales'],function(locales) {
   l2: localizes a string with primary/secondary language.
   trigger: fires off the list of callbacks. */
   localizer.l=function(n,o) {
-    return localizer.langs[localizer.primary][n](localizer.l,o);
+    if(!(n in localizer.langs[localizer.primary]))
+      return '<span style="color:red">'+n+'</span>';
+    else return localizer.langs[localizer.primary][n](localizer.l,o);
   };
   localizer.getlang=function(lang) {
     return localizer.langs[lang];

@@ -1,4 +1,4 @@
-define(function() {
+define(['./dialogs/login','./dialogs/test'],function(login,test) {
   /*our html preprocessor
   [[str]]: <x-t n="str"></x-t>
   [[str foo="bar"]]: <x-t n="str" foo="bar"></x-t>
@@ -24,37 +24,10 @@ define(function() {
           div:div('[['+name+kv(o)+']]'),
           o:{title:title}
         };
-      },
-      attrtest:function() {
-        return div('[[attrtest number="123"]]');
-      },
-      plsplay:function() {
-        var d=div('[[plsplay]]<br/>'+
-        '<button id="guest">[[guest]]</button><br/>'+
-        '<button id="login">[[login]]</button><br/>'+
-        '[[username]]: <input type="text" id="name"/><br/>'+
-        '[[password]]: <input type="password" id="pass"/><br/>');
-        d.children('#login').click(function() {
-          var name=d.children('#name').val();
-          var qs={name:name,pass:d.children('#pass').val()};
-          $.post('/auth',qs).done(function(data) {
-            if(!data.token) return;
-            data.name=name;
-            //if it was a success
-            d.dialog('close');
-            all.game.auth(data);
-          });
-        });
-        return {
-          div:d,
-          o:{
-            title:'welcome',
-            closeable:false,
-            resizable:false
-          }
-        };
-      },
+      }
     };
+    login(dialogs,div,all);
+    test(dialogs,div,all);
     return dialogs;
   };
 });

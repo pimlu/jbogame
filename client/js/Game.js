@@ -17,11 +17,11 @@ function(Controls,Renderer,HUD,handshake) {
     var all=this.all={
       game:this,
       res:this.res,
-      debug:this.debug
+      debug:this.debug||false
     };
     this.controls=new Controls(all);
     this.renderer=new Renderer(all);
-    this.HUD=new HUD(all,this.renderer);
+    this.hud=new HUD(all,this.renderer);
     this.frame();
   }
   Game.prototype.frame=function() {
@@ -32,8 +32,25 @@ function(Controls,Renderer,HUD,handshake) {
   Game.prototype.auth=function(data) {
     console.log(data);
     var all=this.all;
-    for(i in data) all[i]=data[i];
-    handshake(data);
+    all.session={
+      id:data.id,
+      name:data.name
+    };
+    all.state={
+      system:data.system,
+      token:data.token
+    };
+    handshake(all,this.join.bind(this),this.leave.bind(this));
   };
+  Game.prototype.join=function() {
+    console.log('join');
+    console.log(this.all);
+  };
+  Game.prototype.leave=function(e) {
+    console.log('close',e);
+    if(!e.wasClean) {
+      this.hud.dialogs.alert('dirtyclose','connectionlost',{ecode:e.code});
+    }
+  }
   return Game;
 });

@@ -1,18 +1,19 @@
-var ws
+var ws;
 
 define(['WSClient'],function(WSClient) {
-  function handshake(data) {
-    ws=new WSClient(data.system);
+  function handshake(all,join,leave) {
+    ws=new WSClient(all.state.system);
 
     ws.onopen(function() {
       console.log('open');
-      ws.rel({id:data.id,token:data.token});
+      ws.rel({id:all.session.id,token:all.state.token});
     });
     ws.onmessage(function(msg) {
-      console.log(msg);
+      all.state.ws=ws;
+      if(msg==='success') join();
     });
     ws.onclose(function(e) {
-      console.log('close',e);
+      leave(e);
     });
   }
   return handshake;
