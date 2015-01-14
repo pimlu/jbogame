@@ -34,22 +34,29 @@ function(Controls,Renderer,HUD,handshake) {
     var all=this.all;
     all.session={
       id:data.id,
-      name:data.name
+      name:data.name,
+      fresh:true
     };
     all.state={
       system:data.system,
       token:data.token
     };
-    handshake(all,this.join.bind(this),this.leave.bind(this));
+    handshake(all,this.connect.bind(this),this.discon.bind(this));
   };
-  Game.prototype.join=function() {
-    console.log('join');
-    console.log(this.all);
+  Game.prototype.connect=function() {
+    console.log('connect');
+    var session=this.all.session;
+    if(session.fresh) {
+      session.fresh=false;
+    }
   };
-  Game.prototype.leave=function(e) {
+  Game.prototype.discon=function(e) {
     console.log('close',e);
-    if(!e.wasClean) {
-      this.hud.dialogs.alert('dirtyclose','connectionlost',{ecode:e.code});
+    var hopping=e.code===4000;
+    if(!e.wasClean||e.code===1000) {
+      this.hud.dialogs.alert('login.dirtyclose','login.connectionlost',{ecode:e.code});
+    } else if(e.code===4001) {
+      this.hud.dialogs.alert('login.kicked','login.connectionlost',{reason:e.reason});
     }
   }
   return Game;

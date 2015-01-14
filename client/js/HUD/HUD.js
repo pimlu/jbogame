@@ -10,7 +10,7 @@ define(['jquery','./windows'],function($,windows) {
   HUD.prototype.logout=function() {
     $('.ui-dialog-content').dialog('close');
     this.overlay.html('');
-    this.dialogs.plsplay();
+    this.dialogs.play();
     //this.dialogs.attrtest();
   };
   return HUD;

@@ -1,3 +1,3 @@
-define(['./en','./jbo'],function(en,jbo) {
-  return {en:en,jbo:jbo};
+define(['./setup','./en/index','./jbo/index'],function(setup,en,jbo) {
+  return {en:setup(en),jbo:setup(jbo)};
 });
