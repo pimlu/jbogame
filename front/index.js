@@ -26,10 +26,16 @@ module.exports=function(debug,knex) {
   if(config.front.tools) require('./tools.js')(debug,app,express);
   //set up content delivery for the game
   require('./cd.js')(debug,app,express);
+  var brutemw=brute.getMiddleware({
+    key:function(req,res,next) {
+      //prevent too many attempts for the same username
+      next(req.body.name);
+    }
+  });
   //POST forms
   app.post('/register',require('./register.js')(knex));
-  app.post('/changepass',brute.prevent,require('./changepass.js')(knex));
-  app.post('/auth',brute.prevent,require('./auth.js')(knex,rdcl));
+  app.post('/changepass',brutemw,require('./changepass.js')(knex));
+  app.post('/auth',brutemw,require('./auth.js')(knex,rdcl));
 
   http.createServer(app).listen(config.front.port);
   debug('listening at %s.',config.front.port);

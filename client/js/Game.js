@@ -14,10 +14,13 @@ function(Controls,Renderer,HUD,handshake) {
     }
 
     //important information to give to every component
+    //we don't ever want this to go into hash table mode lol
     var all=this.all={
       game:this,
       res:this.res,
-      debug:this.debug||false
+      debug:this.debug||false,
+      session:{},
+      state:{}
     };
     this.controls=new Controls(all);
     this.renderer=new Renderer(all);
@@ -53,10 +56,31 @@ function(Controls,Renderer,HUD,handshake) {
   Game.prototype.discon=function(e) {
     console.log('close',e);
     var hopping=e.code===4000;
+    var self=this;
+    function clean() {
+      self.session={};
+      self.state={};
+    }
+    function leavemsg(name,title,o) {
+      clean();
+      var newo={buttons:[{
+        name:'core.okay',
+        click:function() {
+          this.dialog('close');
+          //repoen login window
+          self.hud.reset();
+        }
+        }]};
+      Object.assign(newo,o);
+      self.hud.dialogs.alert(name,title,newo);
+    }
     if(!e.wasClean||e.code===1000) {
-      this.hud.dialogs.alert('login.dirtyclose','login.connectionlost',{ecode:e.code});
+      leavemsg('login.dirtyclose','login.connectionlost',{ecode:e.code});
     } else if(e.code===4001) {
-      this.hud.dialogs.alert('login.kicked','login.connectionlost',{reason:e.reason});
+      leavemsg('login.kicked','login.connectionlost',{reason:e.reason});
+    } else if(e.code===4000) {
+      clean();
+      this.hud.reset();
     }
   }
   return Game;

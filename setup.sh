@@ -46,10 +46,7 @@ while getopts ":hipd:rb:as:" opt; do case $opt in
 
     npm install
     sudo -u $SUDO_USER bower install
-
-    REIFIEDPATH=components/reified-browser.js
-    [ -e $REIFIEDPATH ] || \
-      sudo -u $SUDO_USER cp node_modules/reified/reified-browser.js $REIFIEDPATH
+    
     ;;
   p)
     apt-get install -y postgresql postgresql-contrib ;;

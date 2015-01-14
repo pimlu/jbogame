@@ -1,4 +1,4 @@
-define(['lodash','jquery','jquery-ui/dialog','./dialogs'],function(_,$,ui,dialogs_) {
+define(['lodash','./dialogs'],function(_,dialogs_) {
   //fixes titles so that they display html instead of escaping
   $.widget("ui.dialog", $.extend({}, $.ui.dialog.prototype, {
     _title: function(title) {
@@ -33,8 +33,8 @@ define(['lodash','jquery','jquery-ui/dialog','./dialogs'],function(_,$,ui,dialog
               if(div.o.dialogClass) div.o.dialogClass+=' no-close';
               else div.o.dialogClass='no-close';
             }
-            //localized title
-            if('title' in div.o) {
+            //localized title- falsy values do nothing
+            if(div.o.title) {
               div.o.title='<x-t n="'+div.o.title+'"></x-t>';
             }
             //blab our custom options onto the defaults

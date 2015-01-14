@@ -81,6 +81,7 @@ config.brute=function() {
   var ExpressBrute=require('express-brute'),
   store=new (ExpressBrute.MemoryStore)();
   return new ExpressBrute(store,{
+    freeRetries:3,
     maxWait:600000//10m
   });
 };

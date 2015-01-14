@@ -1,4 +1,7 @@
 define({
   lang:"bangu",
-  langname:"lojban"
+  langname:"lojban",
+  yes:"go'i",
+  no:"nago'i",
+  okay:"je'e"
 });

@@ -1,4 +1,4 @@
-define(['jquery','three','utils'],function($,THREE,utils) {
+define(['utils'],function(utils) {
   Element.prototype.requestPointerLock = Element.prototype.requestPointerLock || Element.prototype.mozRequestPointerLock || Element.prototype.webkitRequestPointerLock;
   function Renderer(o) {
     for(var i in o) this[i]=o[i];

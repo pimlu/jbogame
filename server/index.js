@@ -25,6 +25,9 @@ module.exports=function(debug,knex,id) {
   function connect(user,ws) {
     debug(require('util').inspect(user));
     ws.rel('connect');
+    setTimeout(function() {
+      ws.close(4001,'idle');
+    },3000);
   }
 
   app.on('listening',function() {

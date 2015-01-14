@@ -1,4 +1,7 @@
 define({
   lang:'language',
-  langname:'English'
+  langname:'English',
+  yes:'Yes',
+  no:'No',
+  okay:'Okay'
 });

@@ -6,7 +6,7 @@ define({
   },
   connectionlost:'Connection lost',
   kicked:function(l,o) {
-    return 'You have been kicked.  Reason:'+o('reason');
+    return 'You have been kicked.  Reason: '+o('reason');
   },
   guest:'guest',
   login:'log in',

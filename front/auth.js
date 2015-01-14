@@ -18,6 +18,8 @@ module.exports=function(knex,rdcl) {
         feedback={token:null};
         return;
       }
+      //reset brute tries
+      req.brute.reset();
       return rb(len).then(function(data) {
         var token=data.toString('base64');
         feedback={id:user.id,token:token};

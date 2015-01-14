@@ -24,11 +24,16 @@ define(['./locales/locales'],function(locales) {
   l2: localizes a string with primary/secondary language.
   trigger: fires off the list of callbacks. */
   localizer.l=function(n,o) {
+    function red(txt) {
+      return '<span style="color:red">'+txt+'</span>';
+    }
+    if(!n) return red('n is missing');
+    //follow the object chain using dots
     var keys=n.split('.');
     var curval=localizer.langs[localizer.primary];
     for(var i=0;i<keys.length;i++) {
       if(!(keys[i] in curval))
-        return '<span style="color:red">'+n+'</span>';
+        return red(n);
       curval=curval[keys[i]];
     }
     return curval(localizer.l,o);

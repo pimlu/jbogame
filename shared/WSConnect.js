@@ -18,8 +18,8 @@
     if(typeof msg==='object') msg=BSON.serialize(msg,false,true,false);
     this.ws.send(msg,ack);
   };
-  WSConnect.prototype.close=function(reason) {
-    this.ws.close(1000,reason);
+  WSConnect.prototype.close=function(code,reason) {
+    this.ws.close(code||1000,reason||'');
   };
   WSConnect.prototype.onopen=function(cb) {
     this.ws.onopen=cb;

@@ -19,7 +19,8 @@ module.exports=function(knex) {
         feedback=[false,'username/old password do not match'];
         return;
       }
-      //if it does, update password
+      //if it does, update password and reset brute tries
+      req.brute.reset();
       return hashp(body.pass,config.front.rounds).then(function(hash) {
         return knex('users').update(
           {pass:hash,changedpass:knex.raw('now()'),ip:req.ip})
