@@ -33,9 +33,11 @@ module.exports=function(debug,knex) {
     }
   });
   //POST forms
-  app.post('/register',require('./register.js')(knex));
-  app.post('/changepass',brutemw,require('./changepass.js')(knex));
-  app.post('/auth',brutemw,require('./auth.js')(knex,rdcl));
+  require('./register.js')(knex).then(function(register) {
+    app.post('/register',register);
+    app.post('/changepass',brutemw,require('./changepass.js')(knex));
+    app.post('/auth',brutemw,require('./auth.js')(knex,rdcl));
+  });
 
   http.createServer(app).listen(config.front.port);
   debug('listening at %s.',config.front.port);

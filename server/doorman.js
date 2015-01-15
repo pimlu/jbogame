@@ -4,7 +4,6 @@ var
   redis=require('then-redis'),
   WSServer=require('./WSServer.js');
 
-var inspect=require('util').inspect;
 module.exports=function(debug,knex,rdcl,app,name,cb) {
   var wss=new WSServer(app);
   var pending={};
@@ -12,10 +11,10 @@ module.exports=function(debug,knex,rdcl,app,name,cb) {
     var t=setTimeout(ws.close.bind(ws,'handshake timeout'),10000);
     ws.onmessage(function(msg) {
       ws.onmessage(function(){});
-      debug(inspect(msg));
+
       var match=true,user;
       //TODO validation?
-      //check if they all match
+      //check if the credentials match
       var key='user:'+msg.id;
       Promise.all([
         rdcl.get(key+':token').then(function(token) {
@@ -34,8 +33,6 @@ module.exports=function(debug,knex,rdcl,app,name,cb) {
         if(!match) return ws.close('handshake invalid');
         ws.rel('success');
         var change={lastplayed:knex.raw('now()'),lastip:ws.ip()};
-        user.lastplayed=new Date;
-        user.lastip=change.lastip;
         return knex('users').update(change).where('id',msg.id);
       }).then(function() {
         cb(user,ws);

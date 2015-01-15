@@ -6,6 +6,8 @@ var
   sub=config.rdcl(redis),
   rdcl=config.rdcl(redis);
 
+var inspect=require('util').inspect;
+
 module.exports=function(debug,knex,id) {
   var reset,system;
 
@@ -23,8 +25,16 @@ module.exports=function(debug,knex,id) {
   var doorman=require('./doorman.js')(debug,knex,rdcl,app,system,connect);
 
   function connect(user,ws) {
-    debug(require('util').inspect(user));
-    ws.rel('connect');
+    debug(inspect(user));
+    var udata={
+      entid:user.entid,
+      cx:user.cx,cy:user.cy,cz:user.cz
+    };
+    if(!user.lastplayed) ws.rel('newplayer');
+    //else udata.lastplayed=+user.lastplayed;
+    debug(inspect(udata));
+    ws.rel(udata);
+
     setTimeout(function() {
       ws.close(4001,'idle');
     },3000);

@@ -8,6 +8,10 @@ lr=1737.10e3;//m
 
 module.exports={
   blueprints:{
+    fighter:{
+      armor:30,
+      shield:150
+    },
     stationtest:{
       station:true,
       armor:500,

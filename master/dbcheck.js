@@ -30,13 +30,11 @@ module.exports=function(debug,knex) {
       t.specificType('ip','inet');
       t.specificType('lastip','inet');
       //added after
-      //foreign(t,'ships');
-    }
-  },{
-    name:'owners',
-    def:function(t) {
-      primary(t);
-      foreign(t,'users');
+      //foreign(t,'ents');
+      //character coordinates
+      //t.double('cx');
+      //t.double('cy');
+      //t.double('cz');
     }
   },{
     name:'systems',
@@ -70,7 +68,7 @@ module.exports=function(debug,knex) {
       foreign(t,'systems');
       t.string('name',30);
       foreign(t,'blueprints');
-      foreign(t,'owners');
+      foreign(t,'users');
 
       foreign(t,'ents','parent');
       //m from sun or whatever
@@ -95,6 +93,10 @@ module.exports=function(debug,knex) {
     name:'users',
     def:function(t) {
       foreign(t,'ents');
+      //character coordinates
+      t.double('cx');
+      t.double('cy');
+      t.double('cz');
     }
   }
   ];

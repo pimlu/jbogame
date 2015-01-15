@@ -1,5 +1,5 @@
 (function() {
-  var server,BSON;
+  var server;
   if(typeof define==='function') {
     server=false;
     define(['bson'],function(bson_) {
@@ -13,6 +13,7 @@
   }
   function WSConnect(ws) {
     this.ws=ws;
+    if(!server) ws.binaryType='arraybuffer';
   }
   WSConnect.prototype.rel=WSConnect.prototype.urel=function(msg,ack) {
     if(typeof msg==='object') msg=BSON.serialize(msg,false,true,false);
@@ -32,8 +33,13 @@
   };
   WSConnect.prototype.onmessage=function(cb) {
     this.ws.onmessage=function(e) {
-      if(typeof e.data!=='string') return cb(BSON.deserialize(e.data));
-      return cb(e.data);
+      var data=e.data;
+      if(typeof data!=='string') {
+        //make it into a typed array instead of a buffer if we're on the client
+        if(!server) data=new Uint8Array(data);
+        return cb(BSON.deserialize(data));
+      }
+      return cb(data);
     };
   };
   if(server) WSConnect.prototype.ip=function() {

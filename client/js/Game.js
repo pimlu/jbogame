@@ -19,8 +19,8 @@ function(Controls,Renderer,HUD,handshake) {
       game:this,
       res:this.res,
       debug:this.debug||false,
-      session:{},
-      state:{}
+      session:null,
+      state:null
     };
     this.controls=new Controls(all);
     this.renderer=new Renderer(all);
@@ -44,25 +44,24 @@ function(Controls,Renderer,HUD,handshake) {
       system:data.system,
       token:data.token
     };
-    handshake(all,this.connect.bind(this),this.discon.bind(this));
+    handshake(all,this.connect.bind(this),this.message.bind(this),this.discon.bind(this));
   };
   Game.prototype.connect=function() {
-    console.log('connect');
     var session=this.all.session;
     if(session.fresh) {
       session.fresh=false;
     }
   };
+  Game.prototype.message=function(msg) {
+    console.log(msg);
+  };
   Game.prototype.discon=function(e) {
-    console.log('close',e);
     var hopping=e.code===4000;
-    var self=this;
-    function clean() {
-      self.session={};
-      self.state={};
-    }
+    var all=this.all,self=this;
+    //creates a dialog with an ok that takes you to login
     function leavemsg(name,title,o) {
-      clean();
+      all.session=null;
+      all.state=null;
       var newo={buttons:[{
         name:'core.okay',
         click:function() {
@@ -75,12 +74,12 @@ function(Controls,Renderer,HUD,handshake) {
       self.hud.dialogs.alert(name,title,newo);
     }
     if(!e.wasClean||e.code===1000) {
-      leavemsg('login.dirtyclose','login.connectionlost',{ecode:e.code});
+      leavemsg(all.session.fresh?'login.failclose':'login.dirtyclose',
+        'login.connectionlost',{system:all.state.system,ecode:e.code});
     } else if(e.code===4001) {
       leavemsg('login.kicked','login.connectionlost',{reason:e.reason});
     } else if(e.code===4000) {
-      clean();
-      this.hud.reset();
+      all.state=null;
     }
   }
   return Game;
