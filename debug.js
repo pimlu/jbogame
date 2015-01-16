@@ -1,6 +1,9 @@
 var colors=require('colors/safe'),
   zdb=process.env.ZDEBUG||'-*',
+  //0=errors,1=warn,2=log,3=dbg
+  zlvl=+(process.env.ZLVL||2),
   rules=zdb.split(',');
+
 
 //0=don't change,1=true,-1=false
 function checkname(name) {
@@ -17,22 +20,37 @@ function checkname(name) {
   return log;
 }
 module.exports=function(color,name,id) {
+  function nop(){};
   //generates logger function with appropriate colored prefix
-  function genlog(fn,sep) {
-    if(fn!=='error'&&!checkname(name)) return function(){};
+  function genlog(fn,lvl,sep) {
+    //if checkname says no, don't log, or if lvl>zlvl, don't log
+    if(!checkname(name)||lvl>zlvl) return nop;
     return function(txt) {
-      var tail=[].slice.call(arguments,1);
+      /*"Optimization Killers" suggests the below commented line triggers
+      fallback to the generic compiler.  we don't want that, especially in
+      something as hot as our log function.
+      //var tail=[].slice.call(arguments,1);
+      */
+      var tail=new Array(arguments.length-1);
+      for(var i=0;i<tail.length;++i) {
+        tail[i]=arguments[i+1];
+      }
       var who=colors.bold[color](name)+sep;
       console[fn].bind(null,who+txt).apply(console,tail);
     }
   }
   var cycle='red,white,green,yellow,blue,magenta,cyan'.split(',');
+  //cycle through colors based on id
   var sep=' '+(typeof id==='undefined'?''
-    :colors.bold[cycle[id%cycle.length]](id)+' ');
-  //initialize log,warn,err with the right text
-  var debug=genlog('log',sep);
-  debug.warn=genlog('warn',' '+colors.bold.yellow.inverse('WARN')+sep);
-  debug.err=debug.error=genlog('error',' '+colors.bold.red.inverse('ERR')+sep);
+    :colors.bold[cycle[
+      typeof id==='string'?2:id%cycle.length //if it's a string, just pick green
+    ]](id)+' ');
+  //initialize dbg,log,warn,err with the right text
+  var debug=genlog('log',2,sep);
+  debug.log=genlog('log',2,sep);//eh why not
+  debug.dbg=genlog('log',3,' '+colors.bold.blue.inverse('DBG')+sep);
+  debug.warn=genlog('warn',1,' '+colors.bold.yellow.inverse('WARN')+sep);
+  debug.err=debug.error=genlog('error',0,' '+colors.bold.red.inverse('ERR')+sep);
 
   return debug;
 };

@@ -1,16 +1,20 @@
-define(['Controls','Renderer','HUD/HUD','handshake'],
-function(Controls,Renderer,HUD,handshake) {
+define(['log','Controls','Renderer','HUD/HUD','handshake'],
+function(log,Controls,Renderer,HUD,handshake) {
   function Game(o) {
     var defaults={
       directory:{},
       res:{x:800,y:600},
-      debug:true
+      debug:true,
+      level:'trace'
     };
     for(var i in defaults) this[i]=defaults[i];
     for(var i in o) this[i]=o[i];
 
     if(this.debug) {
-      console.log('debug');
+      log.setLevel(this.level);
+      log.info('debug');
+    } else {
+      log.setLevel(log.levels.SILENT);
     }
 
     //important information to give to every component
@@ -33,7 +37,7 @@ function(Controls,Renderer,HUD,handshake) {
   };
   //gets called by the login dialog
   Game.prototype.auth=function(data) {
-    console.log(data);
+    log.debug(data);
     var all=this.all;
     all.session={
       id:data.id,
@@ -53,7 +57,7 @@ function(Controls,Renderer,HUD,handshake) {
     }
   };
   Game.prototype.message=function(msg) {
-    console.log(msg);
+    log.debug(msg);
   };
   Game.prototype.discon=function(e) {
     var hopping=e.code===4000;

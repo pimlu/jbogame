@@ -12,7 +12,7 @@ module.exports=function(debug,knex,id) {
   var reset,system;
 
   system=process.env.zdelu_system;
-  debug=debug('cyan',system);
+  debug=debug('cyan','system',system);
   process.title=system.replace(/ /g,'-');
 
   var app=http.createServer(handler),

@@ -22,6 +22,8 @@
     "lodash": "~2.4.1",
     "es5-shim": "~4.0.5",
     "es6-shim": "~0.22.1",
-    "bson": "*"
+    "bson": "*",
+    "loglevel": "~1.2.0",
+    "document-register-element": "~0.1.6"
   }
 }
