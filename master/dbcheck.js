@@ -12,7 +12,8 @@ module.exports=function(debug,knex) {
     t.integer(id||table.substr(0,table.length-1)+'id')
     .unsigned().references('id').inTable(table);
   }
-  function pos(t) {
+  function pos(t,prefix) {
+    prefix=prefix||'';
     t.double('x');
     t.double('y');
     t.double('z');
@@ -32,9 +33,7 @@ module.exports=function(debug,knex) {
       //added after
       //foreign(t,'ents');
       //character coordinates
-      //t.double('cx');
-      //t.double('cy');
-      //t.double('cz');
+      //pos(t,'c');
     }
   },{
     name:'systems',
@@ -73,6 +72,9 @@ module.exports=function(debug,knex) {
       foreign(t,'ents','parent');
       //m from sun or whatever
       pos(t);
+      pos(t,'v');
+      pos(t,'r');
+      pos(t,'rv');
     }
   },{
     name:'places',
@@ -94,9 +96,7 @@ module.exports=function(debug,knex) {
     def:function(t) {
       foreign(t,'ents');
       //character coordinates
-      t.double('cx');
-      t.double('cy');
-      t.double('cz');
+      pos(t,'c');
     }
   }
   ];

@@ -41,6 +41,12 @@ config.server.host='127.0.0.1';
 config.server.statustime=10000;//average time between status reports
 config.server.wdtime=1000;//time before watchdog complains
 config.server.port=9000;
+config.server.cl={};
+config.server.cl.inputdelay=100;//100ms input delay globally
+config.server.cl.inputpack=50;//wait this long minimum to pack inputs together
+config.server.cl.maxforgive=100;//ms plus ping into the (laggy) past that can be "rewritten"
+config.server.cl.msgdelay=50;//minimum message delay
+config.server.cl.maxdist=100e3;//100km view distance for clients
 config.knex={
   client:'pg',
   connection: {
