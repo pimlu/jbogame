@@ -28,16 +28,16 @@ module.exports=function(debug,knex,id) {
     debug(inspect(user));
     var udata={
       entid:user.entid,
-      cx:user.cx,cy:user.cy,cz:user.cz
+      cx:user.cx,cy:user.cy,cz:user.cz,
+      lastplayed:0
     };
-    if(!user.lastplayed) ws.rel('newplayer');
-    //else udata.lastplayed=+user.lastplayed;
+    if(user.lastplayed) udata.lastplayed=+user.lastplayed
     debug(inspect(udata));
     ws.rel(udata);
 
     setTimeout(function() {
       ws.close(4001,'idle');
-    },3000);
+    },60000);
   }
 
   app.on('listening',function() {

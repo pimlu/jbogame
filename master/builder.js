@@ -58,13 +58,19 @@ module.exports=function(debug,knex,data) {
           });
           o.orbiting=true;
         } else if(isstation) {
+          o.pos=o.pos||[0,0,0];
+          o.rot=o.rot||[0,0,0];
+          o.rotv=o.rotv||[0,0,0];
           p=p.then(function() {
             return tools.idins('ents',{
               systemid:systemid,
               name:name,
               blueprintid:tools.subq(knex('blueprints').select('id').where('name',o.blueprint)),
-              x:o.pos[0],y:o.pos[1],z:o.pos[2]
-            })
+              x:o.pos[0],y:o.pos[1],z:o.pos[2],
+              vx:0,vy:0,vz:0,
+              rx:o.rot[0],ry:o.rot[1],rz:o.rot[2],
+              rvx:o.rotv[0],rvy:o.rotv[1],rvz:o.rotv[2]
+            });
           });
         }
         //now add the place; this contains extra logic based on its type

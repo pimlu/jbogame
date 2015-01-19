@@ -31,7 +31,6 @@ module.exports=function(debug,knex,rdcl,app,name,cb) {
         //stop the countdown, update users b/c of login, and do callback
         clearTimeout(t);
         if(!match) return ws.close('handshake invalid');
-        ws.rel('success');
         var change={lastplayed:knex.raw('now()'),lastip:ws.ip()};
         return knex('users').update(change).where('id',msg.id);
       }).then(function() {

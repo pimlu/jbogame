@@ -44,17 +44,19 @@ module.exports=function(knex) {
           });
       }).then(function(userid) {
         //give them their brand new fighter based on the id
-        return knex('ents').returning('id').insert({
+
+        //TEMPORARILY replaced with station so that I can test player networking
+        /*return knex('ents').returning('id').insert({
           systemid:system,
           name:'default fighter name',
           blueprintid:tools.subq(knex('blueprints').select('id').where('name','fighter')),
           userid:userid[0],
           x:0,y:0,z:0,
           parent:station
-        }).then(function(entid) {
+        }).then(function(entid) {*/
           //now that the fighter exists, make users point to it
-          return knex('users').update({entid:entid[0]}).where('id',userid[0]);
-        });
+          return knex('users').update({entid:station/*entid[0]*/}).where('id',userid[0]);
+        //});
       });
     }).then(function(){
       res.send(feedback);

@@ -1,3 +1,4 @@
+
 define(['./core','./login'],function(core,login) {
   var en={
     core:core,

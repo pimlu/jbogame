@@ -14,9 +14,9 @@ module.exports=function(debug,knex) {
   }
   function pos(t,prefix) {
     prefix=prefix||'';
-    t.double('x');
-    t.double('y');
-    t.double('z');
+    t.double(prefix+'x');
+    t.double(prefix+'y');
+    t.double(prefix+'z');
   }
   var tables=[
   {

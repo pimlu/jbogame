@@ -50,10 +50,20 @@ function(log,Controls,Renderer,HUD,handshake) {
     };
     handshake(all,this.connect.bind(this),this.message.bind(this),this.discon.bind(this));
   };
-  Game.prototype.connect=function() {
-    var session=this.all.session;
+  Game.prototype.connect=function(data) {
+    var session=this.all.session,
+      state=this.all.state;
     if(session.fresh) {
       session.fresh=false;
+    }
+    log.debug(data);
+
+    state.entid=data.entid;
+    state.chars={};
+    state.chars[session.id]={r:0,cx:data.cx,cy:data.cy,cz:data.cz};
+
+    if(!data.lastplayed) {
+      this.hud.dialogs.alert('tut.welcome','tut.title');
     }
   };
   Game.prototype.message=function(msg) {

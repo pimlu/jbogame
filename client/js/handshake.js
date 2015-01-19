@@ -7,12 +7,10 @@ define(['WSClient'],function(WSClient) {
     ws.onopen(function() {
       ws.rel({id:all.session.id,token:all.state.token});
     });
-    ws.onmessage(function(msg) {
+    ws.onmessage(function(data) {
       all.state.ws=ws;
-      if(msg==='success') {
-        ws.onmessage(message);
-        join();
-      }
+      ws.onmessage(message);
+      join(data);
     });
     ws.onclose(function(e) {
       leave(e);
