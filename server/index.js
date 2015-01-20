@@ -6,7 +6,9 @@ var
   sub=config.rdcl(redis),
   rdcl=config.rdcl(redis);
 
-var inspect=require('util').inspect;
+/*http/proxy/express level stuff goes here, game logic in game.js.
+handshake process goes in doorman, doorman's connect event is passed to game.js
+*/
 
 module.exports=function(debug,knex,id) {
   var reset,system;
@@ -18,38 +20,18 @@ module.exports=function(debug,knex,id) {
   var app=http.createServer(handler),
     port=config.server.port+id;
 
+  var connect,doorman;
+
   function handler(req,res) {
     res.writeHead(200);
     res.end(system);
   }
-  var doorman=require('./doorman.js')(debug,knex,rdcl,app,system,connect);
-
-  function connect(user,ws) {
-    debug(inspect(user));
-    var udata={
-      entid:user.entid,
-      cx:user.cx,cy:user.cy,cz:user.cz,
-      lastplayed:0
-    };
-    if(user.lastplayed) udata.lastplayed=+user.lastplayed
-    debug(inspect(udata));
-    ws.rel(udata);
-
-    setTimeout(function() {
-      ws.close(4001,'idle');
-    },60000);
-  }
 
   app.on('listening',function() {
     debug('app listening at %s',port);
-    reset=require('./setstatus.js')(debug,system,port,rdcl);
-    loop();
+    feed=require('./setstatus.js')(debug,system,port,rdcl);
+    connect=require('./game.js')(debug,knex,rdcl,feed);
+    doorman=require('./doorman.js')(debug,knex,rdcl,app,system,connect);
   });
   app.listen(port);
-
-
-  function loop() {
-    reset();
-    setTimeout(loop,config.server.wdtime/2);
-  }
 }

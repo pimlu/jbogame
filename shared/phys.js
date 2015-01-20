@@ -6,16 +6,18 @@
     module.exports=impl();
   }
   function impl() {
-    return {
-      pstep:pstep,
-      pmove:pmove,
-      fstep:null,
-      fmove:null
-      };
+    return function(pstep_) {
+      pstep=pstep_/1000;
+      return {
+        pmove:pmove,
+        fstep:null,
+        fmove:null
+        };
+      }
   }
 
   var pdrag=0.9;//per second
-  var pstep=50/1000;//ms per player step
+  var pstep;//s per player step
   pdrag=Math.pow(pdrag,pstep);
 
 
