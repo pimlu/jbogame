@@ -27,11 +27,13 @@ module.exports=function(debug,knex,id) {
     res.end(system);
   }
 
-  app.on('listening',function() {
+  app.on('listening',function () {
     debug('app listening at %s',port);
-    feed=require('./setstatus.js')(debug,system,port,rdcl);
-    connect=require('./game.js')(debug,knex,rdcl,feed);
-    doorman=require('./doorman.js')(debug,knex,rdcl,app,system,connect);
   });
-  app.listen(port);
+  feed=require('./setstatus.js')(debug,system,port,rdcl);
+  require('./game.js')(debug,knex,rdcl,system,feed).then(function(connect_) {
+    connect=connect_;
+    doorman=require('./doorman.js')(debug,knex,rdcl,app,system,connect);
+    app.listen(port);
+  });
 }

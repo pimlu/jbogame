@@ -51,6 +51,7 @@ module.exports=function(knex) {
           name:'default fighter name',
           blueprintid:tools.subq(knex('blueprints').select('id').where('name','fighter')),
           userid:userid[0],
+          timer:0,
           x:0,y:0,z:0,
           parent:station
         }).then(function(entid) {*/

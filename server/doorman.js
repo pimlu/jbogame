@@ -38,5 +38,4 @@ module.exports=function(debug,knex,rdcl,app,name,cb) {
       });
     });
   };
-  debug('doorman');
 };

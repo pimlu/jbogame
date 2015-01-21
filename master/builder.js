@@ -66,6 +66,7 @@ module.exports=function(debug,knex,data) {
               systemid:systemid,
               name:name,
               blueprintid:tools.subq(knex('blueprints').select('id').where('name',o.blueprint)),
+              timer:null,
               x:o.pos[0],y:o.pos[1],z:o.pos[2],
               vx:0,vy:0,vz:0,
               rx:o.rot[0],ry:o.rot[1],rz:o.rot[2],

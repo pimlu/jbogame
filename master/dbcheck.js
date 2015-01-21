@@ -12,11 +12,16 @@ module.exports=function(debug,knex) {
     t.integer(id||table.substr(0,table.length-1)+'id')
     .unsigned().references('id').inTable(table);
   }
-  function pos(t,prefix) {
+  function euler(t,prefix) {
     prefix=prefix||'';
     t.double(prefix+'x');
     t.double(prefix+'y');
     t.double(prefix+'z');
+  }
+  function quat(t,prefix) {
+    prefix=prefix||'';
+    euler(t,prefix);
+    t.double(prefix+'w');
   }
   var tables=[
   {
@@ -42,7 +47,7 @@ module.exports=function(debug,knex) {
       t.string('name');
       t.double('loadavg');
       //ly from origin
-      pos(t);
+      euler(t);
     }
   },{
     name:'bodies',
@@ -69,12 +74,14 @@ module.exports=function(debug,knex) {
       foreign(t,'blueprints');
       foreign(t,'users');
 
+      t.double('timer');
+
       foreign(t,'ents','parent');
       //m from sun or whatever
-      pos(t);
-      pos(t,'v');
-      pos(t,'r');
-      pos(t,'rv');
+      euler(t);
+      euler(t,'v');
+      quat(t,'r');
+      quat(t,'rv');
     }
   },{
     name:'places',
@@ -85,7 +92,7 @@ module.exports=function(debug,knex) {
       foreign(t,'places','parentid')
       t.boolean('orbiting');
       //m from parent
-      pos(t);
+      euler(t);
       foreign(t,'bodies','bodyid');
       foreign(t,'ents');
     }
@@ -96,7 +103,7 @@ module.exports=function(debug,knex) {
     def:function(t) {
       foreign(t,'ents');
       //character coordinates
-      pos(t,'c');
+      euler(t,'c');
     }
   }
   ];
