@@ -1,19 +1,19 @@
 (function() {
 
   if(typeof define==='function') {
-    define([],impl);
+    define(function() {return impl;});
   } else if(typeof module==='object') {
-    module.exports=impl();
+    module.exports=impl;
   }
-  function impl() {
-    return function(pstep_) {
-      pstep=pstep_/1000;
-      return {
-        pmove:pmove,
-        fstep:null,
-        fmove:null
-        };
-      }
+  var THREE;
+  function impl(THREE_,pstep_) {
+    THREE=THREE_;
+    pstep=pstep_/1000;
+    return {
+      pmove:pmove,
+      fstep:null,
+      fmove:null
+    };
   }
 
   var pdrag=0.9;//per second

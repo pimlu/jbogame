@@ -1,5 +1,5 @@
-define(['log','Controls','Renderer','HUD/HUD','handshake'],
-function(log,Controls,Renderer,HUD,handshake) {
+define(['log','Controls','Renderer','HUD/HUD','handshake','phys'],
+function(log,Controls,Renderer,HUD,handshake,phys) {
   function Game(o) {
     var defaults={
       directory:{},
@@ -29,7 +29,7 @@ function(log,Controls,Renderer,HUD,handshake) {
     this.controls=new Controls(all);
     this.renderer=new Renderer(all);
     this.hud=new HUD(all,this.renderer);
-    this.frame();
+    //this.frame();
   }
   Game.prototype.frame=function() {
     requestAnimationFrame( this.frame.bind(this) );
