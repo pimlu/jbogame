@@ -15,7 +15,8 @@ var sysid,
 
 var timer=require('./looptimer.js'),
   phys=require('../shared/phys.js')(THREE,step),
-  modstate=require('./modstate.js');
+  userman=require('./userman.js'),
+  entman=require('./entman.js');
 
 var debug,knex,rdcl,feed;
 
@@ -28,8 +29,9 @@ module.exports=function(debug_,knex_,rdcl_,sysname_,feed_) {
 
   return knex('systems').select('id').where('name',sysname).then(function(row) {
     sysid=row[0].id;
-    modstate=modstate(debug,knex,sysname,sysid);
-    return modstate.loadall(ents);
+    userman=userman(debug,knex,sysname,sysid);
+    entman=entman(debug,knex,sysname,sysid);
+    return entman.loadall(ents);
   }).then(function() {
     timer(debug,feed,loop);
     return connect;
@@ -42,11 +44,8 @@ function connect(user,ws) {
     close(user,e.code,e.reason);
   });
   debug.dbg('user',inspect(user));
-  if(user.id in users) {
-    //nothing yet
-  } else {
-    users[user.id]=user;
-  }
+  userman.connect(users,user,ws);
+  
   var udata={
     entid:user.entid,
     cx:user.cx,cy:user.cy,cz:user.cz,
@@ -63,6 +62,7 @@ function connect(user,ws) {
 
 function close(user,code,reason) {
   debug.dbg('close %s %s %s',user.id,code,reason);
+  userman.close(users,user,code,reason);
 }
 
 //actual game logic in here

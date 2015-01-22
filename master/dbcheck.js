@@ -33,6 +33,9 @@ module.exports=function(debug,knex) {
       t.timestamp('created').defaultTo(knex.raw('now()'));
       t.timestamp('changedpass');
       t.timestamp('lastplayed');
+
+      t.double('timer');
+
       t.specificType('ip','inet');
       t.specificType('lastip','inet');
       //added after
