@@ -26,7 +26,7 @@ module.exports=function(debug) {
     xfwd:true
   });
   //setup proxy array for worlds
-  var getstatus=require('../server/getstatus.js');
+  var getstatus=require('../shared/getstatus.js');
   var status=getstatus.status,
     proxies=[];
   getstatus.change=function(id,oldstat,newstat) {
