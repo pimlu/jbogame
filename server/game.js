@@ -9,12 +9,13 @@ var inspect=require('util').inspect;
 
 var sysid,
   sysname,
-  users={},
+  chars={},
   ents={},
   step=config.server.cl.step;
 
 var timer=require('./looptimer.js'),
   phys=require('../shared/phys.js')(THREE,step),
+  charman=require('./charman.js'),
   userman=require('./userman.js'),
   entman=require('./entman.js');
 
@@ -29,7 +30,8 @@ module.exports=function(debug_,knex_,rdcl_,sysname_,feed_) {
 
   return knex('systems').select('id').where('name',sysname).then(function(row) {
     sysid=row[0].id;
-    userman=userman(debug,knex,sysname,sysid);
+    charman=charman(debug,knex,sysname,sysid,chars);
+    userman=userman(debug,knex,sysname,sysid,charman);
     entman=entman(debug,knex,sysname,sysid);
     return entman.loadall(ents);
   }).then(function() {
@@ -44,8 +46,8 @@ function connect(user,ws) {
     close(user,e.code,e.reason);
   });
   debug.dbg('user',inspect(user));
-  userman.connect(users,user,ws);
-  
+  userman.connect(user,ws);
+
   var udata={
     entid:user.entid,
     cx:user.cx,cy:user.cy,cz:user.cz,
@@ -62,7 +64,7 @@ function connect(user,ws) {
 
 function close(user,code,reason) {
   debug.dbg('close %s %s %s',user.id,code,reason);
-  userman.close(users,user,code,reason);
+  userman.close(user,code,reason);
 }
 
 //actual game logic in here

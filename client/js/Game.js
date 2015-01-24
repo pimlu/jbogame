@@ -29,7 +29,7 @@ function(log,Controls,Renderer,HUD,handshake,phys) {
     this.controls=new Controls(all);
     this.renderer=new Renderer(all);
     this.hud=new HUD(all,this.renderer);
-    //this.frame();
+    this.frame();
   }
   Game.prototype.frame=function() {
     requestAnimationFrame( this.frame.bind(this) );

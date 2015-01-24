@@ -1,43 +1,25 @@
 var
-config=require('../config.js');
+  config=require('../config.js');
 
 var inspect=require('util').inspect;
 
-module.exports=function(debug,knex,sysname,sysid) {
+module.exports=function(debug,knex,sysname,sysid,charman) {
   //keeping track of the state of users should be separate from
   //sending state to him
-  function connect(users,user,ws) {
-
-    adduser(users,user,ws);
+  function connect(user,ws) {
+    charman.addchar(user,ws);
   }
-  function close(users,user,code,reason) {
+  function close(user,code,reason) {
     if(user.safelog) {
       //if they quit early while safe logging
       if(user.timeout!==null) {
-        startlog(users,user,false);
+        startlog(user,false);
       }
     } else {
-      startlog(users,user,false);
+      startlog(user,false);
     }
   }
-  //to be exported to userman
-  function adduser(users,user,ws) {
-    if(user.id in users) {
-      user=users[user.id];
-      clearTimeout(user.timeout);
-      user.timeout=null;
-    } else {
-      users[user.id]=user;
-      user.safelog=false;
-      user.timeout=null;
-      user.timeoutstamp=null;
-    }
-    user.ws=ws;
-  }
-  function deluser(users,user) {
-    delete users[user.id];
-  }
-  function startlog(users,user,safe) {
+  function startlog(user,safe) {
     debug.dbg('start %s %s',user.id,safe);
     if(safe) user.safelog=true;
     user.timeoutstamp=(+new Date)+5e3;
@@ -47,14 +29,13 @@ module.exports=function(debug,knex,sysname,sysid) {
       //well, they're safe now
       user.safelog=true;
       user.ws.close(4002);
-      deluser(users,user);
+      charman.delchar(user);
     },5e3);
   }
 
   return {
     connect:connect,
     close:close,
-    adduser:adduser,
     startlog:startlog
   };
 };
