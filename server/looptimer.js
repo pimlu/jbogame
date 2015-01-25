@@ -1,5 +1,5 @@
 var
-  config=require('../config.js');
+config=require('../config.js');
 
 module.exports=function(debug,feed,loop) {
 
@@ -7,7 +7,8 @@ module.exports=function(debug,feed,loop) {
   slast=0,
   dilsmooth=config.server.cl.dilsmooth,
   dilation=1,
-  step=config.server.cl.step;
+  step=config.server.cl.step,
+  tick=0;
 
   if(debug.test(3)) {
     setInterval(function() {
@@ -32,7 +33,8 @@ module.exports=function(debug,feed,loop) {
     slast=tsleep;
     dilation=dilsmooth*tdiff/step+(1-dilsmooth)*dilation;
 
-    loop(dilation);
+    loop(tick,dilation);
+    tick++;
 
     tlast=tnow;
     setTimeout(timeloop,tsleep);

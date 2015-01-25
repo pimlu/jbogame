@@ -35,7 +35,7 @@ if(cluster.isMaster) {
       return rdcl.smembers('machine:'+machid+':plan');
     }).then(function(plan) {
       debug('I am responsible for %s',plan);
-      for(i in plan) cluster.fork({zdelu_system:plan[i]});
+      for(var i in plan) cluster.fork({zdelu_system:plan[i]});
     });
   }
   for(var i=0;i<proxyw+frontw;i++) {

@@ -6,24 +6,14 @@ var inspect=require('util').inspect;
 
 module.exports=function(debug,knex,sysname,sysid,chars) {
 
-  function addchar(char,ws) {
-    if(char.id in chars) {
-      char=chars[char.id];
-      clearTimeout(char.timeout);
-      char.timeout=null;
-    } else {
-      chars[char.id]=char;
-      char.safelog=false;
-      char.timeout=null;
-      char.timeoutstamp=null;
-    }
-    char.state={};
-    char.ws=ws;
+  function addchar(char) {
+    chars[char.id]=char;
   }
   function delchar(char) {
     delete chars[char.id];
   }
   return {
+    chars:chars,
     addchar:addchar,
     delchar:delchar
   };

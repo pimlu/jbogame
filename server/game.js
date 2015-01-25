@@ -48,15 +48,6 @@ function connect(user,ws) {
   debug.dbg('user',inspect(user));
   userman.connect(user,ws);
 
-  var udata={
-    entid:user.entid,
-    cx:user.cx,cy:user.cy,cz:user.cz,
-    lastplayed:0
-  };
-  if(user.lastplayed) udata.lastplayed=user.lastplayed=+user.lastplayed;
-  debug.dbg('sending udata',inspect(udata));
-  ws.rel(udata);
-
   setTimeout(function() {
     ws.close(4001,'idle');
   },60000);
@@ -68,6 +59,6 @@ function close(user,code,reason) {
 }
 
 //actual game logic in here
-function loop(dilation) {
-  //debug.dbg(dilation);
+function loop(tick,dilation) {
+  userman.updatestate(tick,dilation);
 }
