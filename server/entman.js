@@ -3,8 +3,8 @@ var
 
 var inspect=require('util').inspect;
 
-module.exports=function(debug,knex,sysname,sysid) {
-  function addent(ents,ent) {
+module.exports=function(debug,knex,sysname,sysid,ents) {
+  function addent(ent) {
     ents[ent.id]=ent;
     if(!('ax' in ent)) ent.ax=ent.ay=ent.az=0;
     if(!('rax' in ent)) {
@@ -16,7 +16,7 @@ module.exports=function(debug,knex,sysname,sysid) {
     ent.fresh=false;//whether the buffer is updated
     ent.buffer=new ArrayBuffer(28);//placeholder length
   }
-  function loadall(ents) {
+  function loadall() {
     return knex('ents').where('systemid',sysid).whereRaw('coalesce("timer",-1) != 0')
     .then(function(rows) {
       debug.dbg(inspect(rows));
@@ -26,6 +26,7 @@ module.exports=function(debug,knex,sysname,sysid) {
     });
   }
   return {
+    ents:ents,
     addent:addent,
     loadall:loadall
   };

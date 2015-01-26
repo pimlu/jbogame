@@ -9,8 +9,6 @@ var inspect=require('util').inspect;
 
 var sysid,
   sysname,
-  chars={},
-  ents={},
   step=config.server.cl.step;
 
 var timer=require('./looptimer.js'),
@@ -30,10 +28,10 @@ module.exports=function(debug_,knex_,rdcl_,sysname_,feed_) {
 
   return knex('systems').select('id').where('name',sysname).then(function(row) {
     sysid=row[0].id;
-    charman=charman(debug,knex,sysname,sysid,chars);
-    userman=userman(debug,knex,sysname,sysid,charman);
-    entman=entman(debug,knex,sysname,sysid);
-    return entman.loadall(ents);
+    charman=charman(debug,knex,sysname,sysid,{});
+    userman=userman(debug,knex,sysname,sysid,charman,{});
+    entman=entman(debug,knex,sysname,sysid,{});
+    return entman.loadall();
   }).then(function() {
     timer(debug,feed,loop);
     return connect;

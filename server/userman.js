@@ -3,7 +3,7 @@ var
 
 var inspect=require('util').inspect;
 
-module.exports=function(debug,knex,sysname,sysid,charman) {
+module.exports=function(debug,knex,sysname,sysid,charman,users) {
   var chars=charman.chars;
   //keeping track of the state of users should be separate from
   //sending state to him
@@ -14,6 +14,7 @@ module.exports=function(debug,knex,sysname,sysid,charman) {
       clearTimeout(user.timeout);
     } else {
       charman.addchar(user);
+      users[user.id]=user;
     }
     //TODO is fresh the right way to go about this?
     user.fresh=true;
@@ -26,6 +27,7 @@ module.exports=function(debug,knex,sysname,sysid,charman) {
     user.state={};
   }
   function close(user,code,reason) {
+    user.ws=null;
     if(user.safelog) {
       //if they quit early while safe logging
       if(user.timeout!==null) {
@@ -44,8 +46,9 @@ module.exports=function(debug,knex,sysname,sysid,charman) {
       user.timeout=null;
       //well, they're safe now
       user.safelog=true;
-      user.ws.close(4002);
+      if(user.ws!==null) user.ws.close(4002);
       charman.delchar(user);
+      delete users[user.id];
     },5e3);
   }
 
@@ -53,11 +56,11 @@ module.exports=function(debug,knex,sysname,sysid,charman) {
     /*using a for-in loop on an object in hashtable mode will cause function
     depotimization in current v8, thus Object.keys is used here instead.
     this type of loop will be common*/
-    var keys=Object.keys(chars);
+    var keys=Object.keys(users);
     for(var i=0;i<keys.length;i++) {
-      //TODO maintain list of users
-      if(!/^[0-9]+$/.test(keys[i])) continue;
-      var user=chars[keys[i]];
+      var user=users[keys[i]];
+      //if they're not connected, skip
+      if(user.ws===null) continue;
       if(user.fresh) filluser(user,tick,dilation);
       else updateuser(user,tick,dilation);
     }
@@ -78,10 +81,11 @@ module.exports=function(debug,knex,sysname,sysid,charman) {
   }
 
   function updateuser(user,tick,dilation) {
-
+    user.ws.rel({tick:tick,dil:dilation});
   }
 
   return {
+    users:users,
     connect:connect,
     close:close,
     startlog:startlog,
