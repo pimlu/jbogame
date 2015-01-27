@@ -58,5 +58,6 @@ function close(user,code,reason) {
 
 //actual game logic in here
 function loop(tick,dilation) {
+  
   userman.updatestate(tick,dilation);
 }

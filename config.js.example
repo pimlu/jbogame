@@ -42,10 +42,10 @@ config.server.statustime=10000;//average time between status reports
 config.server.wdtime=1000;//time before watchdog complains
 config.server.port=9000;
 config.server.cl={};
-config.server.cl.step=50;//global timestep
+config.server.cl.step=15;//global timestep
+config.server.cl.minupdate=3;//minimum steps between updates
+config.server.cl.interp=6;//client delay
 config.server.cl.dilsmooth=0.4;//lower=smoother dilation average
-config.server.cl.inputdelay=2;//2 step input delay globally
-config.server.cl.maxforgive=4;//steps into the past that can be rewritten
 config.server.cl.maxdist=100e3;//100km view distance for clients
 config.knex={
   client:'pg',

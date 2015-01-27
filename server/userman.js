@@ -1,6 +1,8 @@
 var
   config=require('../config.js');
 
+var minupdate=config.server.cl.minupdate;
+
 var inspect=require('util').inspect;
 
 module.exports=function(debug,knex,sysname,sysid,charman,users) {
@@ -53,6 +55,8 @@ module.exports=function(debug,knex,sysname,sysid,charman,users) {
   }
 
   function updatestate(tick,dilation) {
+    if(tick%minupdate!==0) return;
+
     /*using a for-in loop on an object in hashtable mode will cause function
     depotimization in current v8, thus Object.keys is used here instead.
     this type of loop will be common*/
