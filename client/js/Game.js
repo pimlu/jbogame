@@ -50,20 +50,17 @@ function(log,Controls,Renderer,HUD,handshake,phys) {
     };
     handshake(all,this.connect.bind(this),this.message.bind(this),this.discon.bind(this));
   };
-  Game.prototype.connect=function(data) {
+  Game.prototype.connect=function() {
+    var ws=this.all.state.ws;
+    ws.rel('synced');
+    this.setup();
+  };
+  Game.prototype.setup=function() {
+
     var session=this.all.session,
-      state=this.all.state;
+    state=this.all.state;
     if(session.fresh) {
       session.fresh=false;
-    }
-    log.debug(data);
-
-    state.entid=data.entid;
-    state.chars={};
-    state.chars[session.id]={r:0,cx:data.cx,cy:data.cy,cz:data.cz};
-
-    if(!data.lastplayed) {
-      this.hud.dialogs.alert('tut.welcome','tut.title');
     }
   };
   Game.prototype.message=function(msg) {

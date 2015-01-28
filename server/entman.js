@@ -25,9 +25,20 @@ module.exports=function(debug,knex,sysname,sysid,ents) {
       }
     });
   }
+  function dotick(tick,dilation) {
+    var keys=Object.keys(ents);
+    for(var i=0;i<keys.length;i++) {
+      var ent=ents[keys[i]];
+      tickent(tick,dilation,ent);
+    }
+  }
+  function tickent(tick,dilation,ent) {
+    
+  }
   return {
     ents:ents,
     addent:addent,
-    loadall:loadall
+    loadall:loadall,
+    dotick:dotick
   };
 };

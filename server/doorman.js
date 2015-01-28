@@ -34,6 +34,7 @@ module.exports=function(debug,knex,rdcl,app,name,cb) {
         var change={lastplayed:knex.raw('now()'),lastip:ws.ip()};
         return knex('users').update(change).where('id',msg.id);
       }).then(function() {
+        ws.rel('shook');
         cb(user,ws);
       });
     });

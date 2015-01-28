@@ -45,6 +45,7 @@ config.server.cl={};
 config.server.cl.step=15;//global timestep
 config.server.cl.minupdate=3;//minimum steps between updates
 config.server.cl.interp=6;//client delay
+config.server.cl.maxlag=12;//maximum redo time
 config.server.cl.dilsmooth=0.4;//lower=smoother dilation average
 config.server.cl.maxdist=100e3;//100km view distance for clients
 config.knex={
