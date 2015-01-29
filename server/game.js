@@ -46,7 +46,7 @@ function connect(user,ws) {
     else ws.rel({t:+new Date});
   });
 }
-//we've finished timesync, get rolling
+//client says we've finished timesync, get rolling
 function setup(user,ws) {
   ws.onmessage(function(){});//TODO client input handling
   ws.onclose(function(e) {

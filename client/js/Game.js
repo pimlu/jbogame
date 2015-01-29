@@ -1,5 +1,5 @@
-define(['log','Controls','Renderer','HUD/HUD','handshake','phys'],
-function(log,Controls,Renderer,HUD,handshake,phys) {
+define(['log','Controls','Renderer','HUD/HUD','handshake','TimeSync','phys'],
+function(log,Controls,Renderer,HUD,handshake,TimeSync,phys) {
   function Game(o) {
     var defaults={
       directory:{},
@@ -48,14 +48,12 @@ function(log,Controls,Renderer,HUD,handshake,phys) {
       system:data.system,
       token:data.token
     };
-    handshake(all,this.connect.bind(this),this.message.bind(this),this.discon.bind(this));
-  };
-  Game.prototype.connect=function() {
-    var ws=this.all.state.ws;
-    ws.rel('synced');
-    this.setup();
+    var tsync=new TimeSync(all,this.setup.bind(this));
+    handshake(all,tsync.connect.bind(tsync),tsync.message.bind(tsync),this.discon.bind(this));
   };
   Game.prototype.setup=function() {
+    var ws=this.all.state.ws;
+    ws.onmessage(this.message.bind(this));
 
     var session=this.all.session,
     state=this.all.state;
