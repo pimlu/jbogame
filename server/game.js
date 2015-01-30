@@ -41,9 +41,19 @@ module.exports=function(debug_,knex_,rdcl_,sysname_,feed_) {
 
 //sync up time
 function connect(user,ws) {
+  var i=0;
+  var t=setTimeout(function() {
+    ws.close('ur 2 slow');
+  },5000);
   ws.onmessage(function(msg) {
-    if(msg==='synced') setup(user,ws);
-    else ws.rel({t:+new Date});
+    if(i++>=100) {
+      ws.close('too many time reqs');
+    } else if(msg==='synced') {
+      clearTimeout(t);
+      setup(user,ws);
+    } else {
+      ws.rel({t:+new Date});
+    }
   });
 }
 //client says we've finished timesync, get rolling

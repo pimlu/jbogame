@@ -41,7 +41,9 @@ module.exports=function(debug,knex,sysname,sysid,charman,users) {
   }
   function startlog(user,safe) {
     debug.dbg('start %s %s',user.id,safe);
+    //if safe, they're still connected.  else their ws died
     if(safe) user.safelog=true;
+    else user.ws=null;//set ws to null so we know they're not here
     user.timeoutstamp=(+new Date)+5e3;
     user.timeout=setTimeout(function() {
       debug.dbg('finish %s',user.id,safe);
