@@ -13,6 +13,7 @@
     "express": "^4.11.0",
     "express-brute": "^0.5.2",
     "http-proxy": "^1.8.1",
+    "jade": "^1.9.1",
     "knex": "^0.7.3",
     "lodash": "^2.4.1",
     "noisejs": "^2.1.0",

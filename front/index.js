@@ -8,7 +8,10 @@ var
   express=require('express'),
   bodyparser=require('body-parser'),
   bcrypt=require('bcrypt'),
-  app = express();
+  app=express();
+
+//TODO consider autormating this line
+var jadefiles=['index','plibiho','japlerpoi'];
 
 module.exports=function(debug,knex) {
   //runs after tables have been checked
@@ -16,10 +19,18 @@ module.exports=function(debug,knex) {
   var static=config.static(app,express);
   var brute=config.brute();
   app.enable('trust proxy');//for http-proxy
+  app.set('views',config.dnjoin('front/jade'));
+  app.set('view engine','jade');
   //so we can post things and such
   app.use(bodyparser.urlencoded({extended:true}));
   app.use(bodyparser.json());
   //set up routes
+  jadefiles.forEach(function(name) {
+    var path='/'+(name==='index'?'':name);
+    app.get(path,function(req,res) {
+      res.render(name,{title:'Hey',message:'Hello there!'});
+    });
+  });
   static('/','front/public');
   static('/js','front/shared');
   static('/js/lib','components');

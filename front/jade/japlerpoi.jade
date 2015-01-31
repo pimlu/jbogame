@@ -1,0 +1,15 @@
+extends ./layout.jade
+
+block head
+  script(src='/js/validnewpass.js')
+  script(src='/js/ajaxutils.js')
+  script(src='/js/japlerpoi.js')
+block content
+  p Your password can be changed using the form below.
+  form#change
+    p username: #[input#name(type='text')] 4-16 chars, alphanum_
+    p current password: #[input#opass(type='password')]
+    p new password: #[input#pass(type='password')] min 8 chars, ko na bebna
+    p repeat new pass: #[input#pass2(type='password')]
+    input(type='submit', value='register')
+    span#feedback

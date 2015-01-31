@@ -1,0 +1,14 @@
+extends ./layout.jade
+
+block head
+    script(src='/js/validuser.js')
+    script(src='/js/ajaxutils.js')
+    script(src='/js/plibiho.js')
+block content
+  p Welcome!  Simply fill out the form below to sign up.
+  form#signup
+    p username: #[input#name(type='text')] 4-16 chars, alphanum_
+    p password: #[input#pass(type='password')] min 8 chars, ko na bebna
+    p repeat pass: #[input#pass2(type='password')]
+    input(type='submit', value='register')
+    span#feedback
