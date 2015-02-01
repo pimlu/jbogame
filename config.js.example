@@ -6,7 +6,7 @@ var fs=require('fs'),
 var proxyw=1,
   frontw=1,
   nodes=true,
-  rev=5000;//if this is truthy, we rev and wait this long to allocate nodes
+  rev=1000;//if this is truthy, we rev and wait this long to allocate nodes
 
 var config = {};
 var dnjoin=config.dnjoin=path.join.bind(path,__dirname);
@@ -34,7 +34,7 @@ config.front.rounds=8;
 config.front.tokenl=32;
 config.front.cd={};
 config.front.cd.dir='client';
-config.front.tools=false;
+config.front.tools=true;
 config.server.makenodes=nodes;
 config.server.rev=rev;
 config.server.host='127.0.0.1';

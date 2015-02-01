@@ -16,13 +16,14 @@ function helpmsg {
   -r: sets up redis
   -b <intf>: tells redis to bind to <intf>
   -a: sets up trust-based auth in postgres
-  -s <fqdn>: creates a self-signed cert for you with commonName <fqdn>"
+  -s <fqdn>: creates a self-signed cert for you with commonName <fqdn>
+  -c: copies config.js.example into config.js"
   [ $# != 0 ] && echo `tput bold`$1`tput sgr0`
   exit 1
 }
 [ $# == 0 ] && helpmsg
 ! [ $(id -u) = 0 ] && helpmsg "this script requires root."
-while getopts ":hipd:rb:as:" opt; do case $opt in
+while getopts ":hipd:rb:as:c" opt; do case $opt in
   h)
     helpmsg ;;
   i)
@@ -46,7 +47,7 @@ while getopts ":hipd:rb:as:" opt; do case $opt in
 
     npm install
     sudo -u $SUDO_USER bower install
-    
+
     ;;
   p)
     apt-get install -y postgresql postgresql-contrib ;;
@@ -65,8 +66,8 @@ while getopts ":hipd:rb:as:" opt; do case $opt in
     VERSION=`sudo -u postgres psql -c 'SELECT version()'\
     |grep -oh "[0-9]\.[0-9]"|tr " " "\n"|head -n 1`
     HBA=`sudo -u postgres psql -c 'SHOW hba_file'|grep /`
-    NEWHBA=$HBA.`date +"%s"`.backup
-    [ -e $HBA ] && mv $HBA $NEWHBA
+    BUHBA=$HBA.`date +"%s"`.backup
+    [ -e $HBA ] && { mv $HBA $BUHBA; echo "backup config written to $BUHBA"; }
     echo "local all all trust
 host all all 127.0.0.1/32 trust
 host all all ::1/128 trust" >> $HBA
@@ -113,6 +114,12 @@ emailAddress=pimlu@users.noreply.github.com"
     # Generate the cert (good for 10 years)
     openssl x509 -req -days 3650 -in $FILE.csr -signkey $FILE.key -out $FILE.crt
     echo successfully created self signed cert
+    ;;
+  c)
+    CFG='config.js'
+    BUCFG=$CFG.`date +"%s"`.backup
+    [ -e $CFG ] && { mv $CFG $BUCFG; echo "backup config written to $BUCFG"; }
+    sudo -u $SUDO_USER cp "$CFG".example $CFG
     ;;
   \?)
     echo "  invalid flag: -$OPTARG"
