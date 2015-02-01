@@ -8,3 +8,4 @@ config.js
 *.crt
 *.key
 *.key.org
+*.backup

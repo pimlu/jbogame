@@ -27,24 +27,16 @@ while getopts ":hipd:rb:as:c" opt; do case $opt in
   h)
     helpmsg ;;
   i)
-
-    #if node is not installed
-    if ! hash node 2>/dev/null; then
-      cd /tmp
-      wget http://nodejs.org/dist/node-latest.tar.gz
-      tar xvzf node-latest.tar.gz
-      rm -f node-latest.tar.gz
-      cd node-v*
-      ./configure
-      CXX="g++ -Wno-unused-local-typedefs" make -j`nproc`
-      CXX="g++ -Wno-unused-local-typedefs" make install
-      cd /tmp
-      rm -rf /tmp/node-v*
-      hash bower 2>/dev/null || npm install -g n node-debug bower
-    fi
-
+    apt-get update
+    apt-get install -y curl build-essential nodejs nodejs-legacy npm
+    
     cd $DIR
-
+    
+    npm install -g npm
+    npm install -g n bower
+    
+    n stable
+    
     npm install
     sudo -u $SUDO_USER bower install
 
@@ -118,7 +110,7 @@ emailAddress=pimlu@users.noreply.github.com"
   c)
     CFG='config.js'
     BUCFG=$CFG.`date +"%s"`.backup
-    [ -e $CFG ] && { mv $CFG $BUCFG; echo "backup config written to $BUCFG"; }
+    sudo -u $SUDO_USER [ -e $CFG ] && { mv $CFG $BUCFG; echo "backup config written to $BUCFG"; }
     sudo -u $SUDO_USER cp "$CFG".example $CFG
     ;;
   \?)
