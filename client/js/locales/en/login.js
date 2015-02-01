@@ -1,6 +1,7 @@
 define({
   welcome:'Welcome',
   play:'Welcome to zdelu!  Try as a guest or log in.',
+  auth:'Connecting...',
   connectionlost:'Connection lost',
   failclose:function(l,o) {
     return 'Failed to connect to '+o('system')+'.  Error code: '+o('ecode');

@@ -1,6 +1,7 @@
 define({
   welcome:"fi'i",
   play:".ui zanvi'e fi la zdelu .i ko vitke gi'onai cmisau",
+  auth:"ca'a jorne troci ...",
   connectionlost:"co'u jorne",
   failclose:function(l,o) {
     return ".i fliba loka jorne la ."+o('system')+". .i srera tu'a li "+o('ecode');

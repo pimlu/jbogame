@@ -37,6 +37,7 @@ function(log,Controls,Renderer,HUD,handshake,TimeSync,phys) {
   };
   //gets called by the login dialog
   Game.prototype.auth=function(data) {
+    this.hud.auth();
     log.debug(data);
     var all=this.all;
     all.session={
@@ -52,6 +53,7 @@ function(log,Controls,Renderer,HUD,handshake,TimeSync,phys) {
     handshake(all,tsync.connect.bind(tsync),tsync.message.bind(tsync),this.discon.bind(this));
   };
   Game.prototype.setup=function() {
+    this.hud.setup();
     var ws=this.all.state.ws;
     ws.onmessage(this.message.bind(this));
 
@@ -68,23 +70,24 @@ function(log,Controls,Renderer,HUD,handshake,TimeSync,phys) {
     var hopping=e.code===4000;
     var all=this.all,self=this;
     //creates a dialog with an ok that takes you to login
-    function leavemsg(name,title,o) {
+    function leavemsg(name,title,args) {
       all.session=null;
       all.state=null;
-      var newo={buttons:[{
-        name:'core.okay',
-        click:function() {
-          this.dialog('close');
-          //repoen login window
-          self.hud.reset();
-        }
-        }]};
-      Object.assign(newo,o);
-      self.hud.dialogs.alert(name,title,newo);
+      var o={
+        buttons:[{
+          name:'core.okay',
+          click:function() {
+            this.dialog('close');
+            //repoen login window
+            self.hud.reset();
+          }
+        }]
+      };
+      self.hud.dialogs.alert(name,title,args,o);
     }
     if(!e.wasClean||e.code===1000) {
       leavemsg(all.session.fresh?'login.failclose':'login.dirtyclose',
-        'login.connectionlost',{system:all.state.system,ecode:e.code});
+      'login.connectionlost',{system:all.state.system,ecode:e.code});
     } else if(e.code===4001) {
       leavemsg('login.kicked','login.connectionlost',{reason:e.reason});
     } else if(e.code===4000) {

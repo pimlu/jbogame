@@ -1,8 +1,8 @@
 define(['lodash','./dialogs'],function(_,dialogs_) {
   //fixes titles so that they display html instead of escaping
-  $.widget("ui.dialog", $.extend({}, $.ui.dialog.prototype, {
-    _title: function(title) {
-      if (!this.options.title ) {
+  $.widget("ui.dialog", $.extend({},$.ui.dialog.prototype,{
+    _title:function(title) {
+      if(!this.options.title ) {
         title.html("&#160;");
       } else {
         title.html(this.options.title);
@@ -27,19 +27,24 @@ define(['lodash','./dialogs'],function(_,dialogs_) {
           var div=dialog.apply(null,arguments);
           //if it's not a jquery object- AKA, we're handing in options too
           if(!('jquery' in div)) {
+            var o=div;//it's not actually a div, it's options
+            o.attr=o.attr||{};
+
             //if we want scripts to control when it goes away
-            if(div.o.closeable===false) {
-              delete div.o.closeable;
-              if(div.o.dialogClass) div.o.dialogClass+=' no-close';
-              else div.o.dialogClass='no-close';
+            if(o.closeable===false) {
+              if('dialogClass' in o) options.dialogClass=o.dialogClass+' no-close';
+              else options.dialogClass='no-close';
             }
             //localized title- falsy values do nothing
-            if(div.o.title) {
-              div.o.title='<x-t n="'+div.o.title+'"></x-t>';
+            if(o.title) {
+              options.title='<x-t n="'+o.title+'"></x-t>';
             }
-            //blab our custom options onto the defaults
-            _.extend(options,div.o);
-            div=div.div;
+            if('options' in o) Object.assign(options,o.options);
+            //now pull our div back in
+            div=o.div;
+            for(var i in o.attr||{}) {
+              div.attr(i,o.attr[i]);
+            }
           }
           div.dialog(options).parents('.ui-dialog')
             .draggable({snap:true,containment:'parent'});

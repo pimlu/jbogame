@@ -10,7 +10,7 @@ var
   bcrypt=require('bcrypt'),
   app=express();
 
-//TODO consider autormating this line
+//TODO consider automating this line
 var jadefiles=['index','plibiho','japlerpoi'];
 
 module.exports=function(debug,knex) {
@@ -28,7 +28,7 @@ module.exports=function(debug,knex) {
   jadefiles.forEach(function(name) {
     var path='/'+(name==='index'?'':name);
     app.get(path,function(req,res) {
-      res.render(name,{title:'Hey',message:'Hello there!'});
+      res.render(name);
     });
   });
   static('/','front/public');

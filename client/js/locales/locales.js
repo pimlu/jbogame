@@ -1,5 +1,5 @@
 (function() {
-  var modules=['core','login','tut'];
+  var modules=['core','login','tut','chat'];
   var langs=['en','jbo'];
   var paths=['./setup'];
 
