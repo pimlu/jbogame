@@ -1,19 +1,19 @@
 var
-config=require('../config.js');
+  config = require('../config.js');
 
-module.exports=function(debug,feed,loop) {
+module.exports = function(debug, feed, loop) {
 
-  var tlast=+new Date,
-  slast=0,
-  dilsmooth=config.server.cl.dilsmooth,
-  dilation=1,
-  step=config.server.cl.step,
-  tick=0;
+  var tlast = +new Date,
+    slast = 0,
+    dilsmooth = config.server.cl.dilsmooth,
+    dilation = 1,
+    step = config.server.cl.step,
+    tick = 0;
 
-  if(debug.test(3)) {
+  if (debug.test(3)) {
     setInterval(function() {
-      debug.dbg('dilation is %s',dilation);
-    },10000);
+      debug.dbg('dilation is %s', dilation);
+    }, 10000);
   }
 
   //feeds watchdog, maintains time, and such
@@ -27,17 +27,17 @@ module.exports=function(debug,feed,loop) {
     50+40-60=30
     time dilation is tdiff/step
     */
-    var tnow=+new Date,
-    tdiff=tnow-tlast,
-    tsleep=Math.max(0,step+slast-tdiff);
-    slast=tsleep;
-    dilation=dilsmooth*tdiff/step+(1-dilsmooth)*dilation;
+    var tnow = +new Date,
+      tdiff = tnow - tlast,
+      tsleep = Math.max(0, step + slast - tdiff);
+    slast = tsleep;
+    dilation = dilsmooth * tdiff / step + (1 - dilsmooth) * dilation;
 
-    loop(tick,dilation);
+    loop(tick, dilation);
     tick++;
 
-    tlast=tnow;
-    setTimeout(timeloop,tsleep);
+    tlast = tnow;
+    setTimeout(timeloop, tsleep);
   }
 
   timeloop();

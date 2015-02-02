@@ -1,10 +1,9 @@
-
-module.exports=function(knex) {
+module.exports = function(knex) {
   return {
-    subq:function(q) {
-      return knex.raw('('+q+')');
+    subq: function(q) {
+      return knex.raw('(' + q + ')');
     },
-    idins:function(name,o) {
+    idins: function(name, o) {
       return knex(name).returning('id').insert(o);
     }
   };

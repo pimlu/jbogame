@@ -1,4 +1,4 @@
 define({
-  title:'Chat',
-  box:'chat box'
+  title: 'Chat',
+  box: 'chat box'
 });

@@ -1,3 +1,3 @@
-module.exports=function() {
-  return true;//stub
+module.exports = function() {
+  return true; //stub
 };

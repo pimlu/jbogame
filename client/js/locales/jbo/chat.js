@@ -1,4 +1,4 @@
 define({
-  title:"tavla",
-  box:"ba casnu tanxe"
+  title: "tavla",
+  box: "ba casnu tanxe"
 });
