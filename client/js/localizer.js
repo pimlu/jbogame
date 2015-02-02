@@ -27,7 +27,9 @@ define(['./locales/locales'],function(locales) {
     function red(txt) {
       return '<span style="color:red">'+txt+'</span>';
     }
-    if(!n) return red('n is missing');
+    if(n===null) return red('n is missing');
+    else if(n==='') return '';
+    else if(n==='nbsp') return '&nbsp;';
     //follow the object chain using dots
     var keys=n.split('.');
     var curval=localizer.langs[localizer.primary];

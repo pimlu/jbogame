@@ -21,7 +21,6 @@ div.overlay {
   height: 100%;
 }
 
-
 .ui-dialog-content input[type="text"],
 .ui-dialog-content input[type="password"] {
   width:3cm;
@@ -29,4 +28,13 @@ div.overlay {
 
 .no-close .ui-dialog-titlebar-close {
   display: none;
+}
+.red {
+  color:red;
+}
+
+.logfb {
+  display:block;
+  margin-top:0.5em;
+  font-size:0.8em;
 }
