@@ -1,6 +1,7 @@
-define(function() {
-  return function(dialogs,div,all) {
-    dialogs.chat=function(user) {
+define(['../div'],function(div) {
+
+  return {
+    box:function(user) {
       var d=div('[[chat.box]]');
 
       return {
@@ -10,6 +11,7 @@ define(function() {
           closeable:false
         }
       };
-    };
+    }
   };
+
 });

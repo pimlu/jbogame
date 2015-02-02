@@ -18,7 +18,6 @@ define(['log'],function(log) {
     this.ws.rel('');
   };
   TimeSync.prototype.message=function(msg) {
-    log.debug(msg);
     var self=this;
 
     if(this.i<samples) {
@@ -32,7 +31,7 @@ define(['log'],function(log) {
       setTimeout(function() {
         self.last=+new Date;
         self.ws.rel('');
-      },100);
+      },50);
 
       this.i++;
     } else {

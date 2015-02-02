@@ -10,10 +10,10 @@ Development is done on Linux Mint, and other distros are not supported.  Other c
 ### Usage
 
 The install script has to download quite a few files, be patient.  Running `sudo apt-get update && sudo apt-get upgrade` beforehand is recommended.
-  
+
   * To install: `sudo ./setup.sh -cipd jbogame -ars 127.0.0.1`
   * To run: `npm start`
-  * To connect: go to [localhost:8080](http://localhost:8080/)
+  * To connect: go to [localhost:8080](http://localhost:8080/). (the security warning is due to the self-signed cert `setup.sh` just generated)
 
 ### Technical details
 

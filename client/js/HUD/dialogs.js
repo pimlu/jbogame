@@ -1,23 +1,20 @@
-//TODO automate these arguments
-define(['./dialogs/alert','./dialogs/login','./dialogs/chat'],
-function(alert_,login,chat) {
-  /*our html preprocessor
-  [[str]]: <x-t n="str"></x-t>
-  [[str foo="bar"]]: <x-t n="str" foo="bar"></x-t>
-  */
-  function div(inner,id) {
-    var idattr=id?' id="'+id+'"':'';
-    return $('<div'+idattr+'>').html(
-      inner.replace(/\[\[([^ ]*?)\]\]/g,'<x-t n="$1"></x-t>')
-      .replace(/\[\[([^ ]*?) (.*?)\]\]/g,'<x-t n="$1" $2></x-t>')
-    );
+(function() {
+  var modules=['core','chat','login'];
+  var paths=['./setup'];
+
+  //auto generate what to require
+  for(var i=0;i<modules.length;i++) {
+    paths.push('./dialogs/'+modules[i]);
   }
-  return function(all) {
+
+  define(paths,function(setup) {
+    var locales={};
+    //populate dialogs based on module system
     var dialogs={};
-    //TODO automate these arguments!!!
-    alert_(dialogs,div,all);
-    login(dialogs,div,all);
-    chat(dialogs,div,all);
+    for(var i=0;i<modules.length;i++) {
+      dialogs[modules[i]]=arguments[i+1];
+    }
+    setup(dialogs);
     return dialogs;
-  };
-});
+  });
+})();

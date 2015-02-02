@@ -83,7 +83,7 @@ function(log,Controls,Renderer,HUD,handshake,TimeSync,phys) {
           }
         }]
       };
-      self.hud.dialogs.alert(name,title,args,o);
+      self.hud.dialogs.core.alert(name,title,args,o);
     }
     if(!e.wasClean||e.code===1000) {
       leavemsg(all.session.fresh?'login.failclose':'login.dirtyclose',
