@@ -1,10 +1,13 @@
-var
-  config = require('../config.js');
+var config = require('../config.js');
 
 var minupdate = config.server.cl.minupdate;
 
 var inspect = require('util').inspect;
 
+var CONNECTING = 0,
+  OPEN = 1,
+  CLOSING = 2,
+  CLOSED = 3;
 module.exports = function(debug, knex, sysname, sysid, charman, users) {
   var chars = charman.chars;
   //keeping track of the state of users should be separate from
@@ -14,6 +17,14 @@ module.exports = function(debug, knex, sysname, sysid, charman, users) {
     if (user.id in chars) {
       user = chars[user.id];
       clearTimeout(user.timeout);
+      //if, on the contrary, they are still connected, sack the old one
+      if (user.ws.isopen()) {
+        /*don't go crazy with disconnect handling if someone else is now
+        in charge- this way, the timeout doesn't start after the close
+        event asynchronously triggers*/
+        user.ws.onclose(function() {});
+        user.ws.close(4001, 'another client has logged in as you');
+      }
     } else {
       charman.addchar(user);
       users[user.id] = user;
@@ -30,7 +41,6 @@ module.exports = function(debug, knex, sysname, sysid, charman, users) {
   }
 
   function close(user, code, reason) {
-    user.ws = null;
     if (user.safelog) {
       //if they quit early while safe logging
       if (user.timeout !== null) {
@@ -45,17 +55,16 @@ module.exports = function(debug, knex, sysname, sysid, charman, users) {
     debug.dbg('start %s %s', user.id, safe);
     //if safe, they're still connected.  else their ws died
     if (safe) user.safelog = true;
-    else user.ws = null; //set ws to null so we know they're not here
-    user.timeoutstamp = (+new Date) + 5e3;
+    user.timeoutstamp = (+new Date) + 15e3;
     user.timeout = setTimeout(function() {
       debug.dbg('finish %s', user.id, safe);
       user.timeout = null;
       //well, they're safe now
       user.safelog = true;
-      if (user.ws !== null) user.ws.close(4002);
+      if (user.ws.isopen()) user.ws.close(4002);
       charman.delchar(user);
       delete users[user.id];
-    }, 5e3);
+    }, 15e3);
   }
 
   function updatestate(tick, dilation) {
@@ -68,7 +77,7 @@ module.exports = function(debug, knex, sysname, sysid, charman, users) {
     for (var i = 0; i < keys.length; i++) {
       var user = users[keys[i]];
       //if they're not connected, skip
-      if (user.ws === null) continue;
+      if (!user.ws.isopen()) continue;
       if (user.fresh) filluser(user, tick, dilation);
       else updateuser(user, tick, dilation);
     }

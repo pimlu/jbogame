@@ -11,11 +11,21 @@
     BSON = require('bson').BSONPure.BSON;
     module.exports = WSConnect;
   }
+  var CONNECTING = 0,
+    OPEN = 1,
+    CLOSING = 2,
+    CLOSED = 3;
 
   function WSConnect(ws) {
     this.ws = ws;
     if (!server) ws.binaryType = 'arraybuffer';
   }
+  WSConnect.prototype.readyState=function() {
+    return this.ws.readyState;
+  };
+  WSConnect.prototype.isopen=function() {
+    return this.ws.readyState === 1;
+  };
   WSConnect.prototype.rel = WSConnect.prototype.urel = function(msg, ack) {
     if (typeof msg === 'object') msg = BSON.serialize(msg, false, true, false);
     this.ws.send(msg, ack);
