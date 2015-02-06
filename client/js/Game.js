@@ -67,7 +67,10 @@ define(['log', 'Controls', 'Renderer', 'HUD/HUD', 'handshake', 'TimeSync', 'phys
       }
     };
     Game.prototype.message = function(msg) {
-      log.debug(msg);
+      //since firefox lags out when I log too much, I need to slow this down
+      if(Object.keys(msg).length!==2) {
+        log.debug(msg);
+      }
     };
     Game.prototype.discon = function(e) {
       var hopping = e.code === 4000;

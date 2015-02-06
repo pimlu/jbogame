@@ -37,10 +37,28 @@ module.exports = function(debug, knex, sysname, sysid, charman, users) {
     user.timeoutstamp = null;
 
     user.ws = ws;
-    user.state = {};
+    user.state = {
+      connects:[],
+      disconnects:[]
+    };
+
+    /*add to the list of connections so that our newly connected user learns
+    about everyone else, and everyone else learns about him*/
+    var keys=Object.keys(users);
+    for(var i=0;i<keys.length;i++) {
+      var curuser=users[keys[i]];
+      user.state.connects.push(curuser);
+      if(curuser !== user) curuser.state.connects.push(user);
+    }
   }
 
   function close(user, code, reason) {
+    var keys=Object.keys(users);
+    for(var i=0;i<keys.length;i++) {
+      //TODO make sure pushing to user included doesn't break things
+      var curuser=users[keys[i]];
+      curuser.state.disconnects.push(user);
+    }
     if (user.safelog) {
       //if they quit early while safe logging
       if (user.timeout !== null) {
@@ -79,20 +97,14 @@ module.exports = function(debug, knex, sysname, sysid, charman, users) {
       //if they're not connected, skip
       if (!user.ws.isopen()) continue;
       if (user.fresh) filluser(user, tick, dilation);
-      else updateuser(user, tick, dilation);
+      updateuser(user, tick, dilation);
     }
   }
 
   function filluser(user, tick, dilation) {
     user.fresh = false;
     var udata = {
-      entid: user.entid,
-      cx: user.cx,
-      cy: user.cy,
-      cz: user.cz,
-      lastplayed: 0,
-      tick: tick,
-      dil: dilation
+      lastplayed: 0
     };
     if (user.lastplayed) udata.lastplayed = user.lastplayed = +user.lastplayed;
     debug.dbg('sending udata', inspect(udata));
@@ -100,10 +112,25 @@ module.exports = function(debug, knex, sysname, sysid, charman, users) {
   }
 
   function updateuser(user, tick, dilation) {
-    user.ws.rel({
+    var udata={
       tick: tick,
       dil: dilation
-    });
+    };
+    //tell the user about any new connections, if there is any
+    if(user.state.connects.length !== 0) {
+      var connects = user.state.connects;
+      udata.cncts = [];
+      while(connects.length !== 0) {
+        var connector = connects.pop();
+        udata.cncts.push({
+          entid: user.entid,
+          cx: user.cx,
+          cy: user.cy,
+          cz: user.cz
+        });
+      }
+    }
+    user.ws.rel(udata);
   }
 
   return {

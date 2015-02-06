@@ -1,5 +1,4 @@
-var
-  config = require('../config.js'),
+var config = require('../config.js'),
   Promise = require('bluebird'),
   redis = require('then-redis'),
   THREE = require('three');
@@ -38,27 +37,27 @@ module.exports = function(debug_, knex_, rdcl_, sysname_, feed_) {
   });
 };
 
-
 //sync up time
 function connect(user, ws) {
-    var i = 0;
-    var t = setTimeout(function() {
-      ws.close('ur 2 slow');
-    }, 5000);
-    ws.onmessage(function(msg) {
-      if (i++ >= 100) {
-        ws.close('too many time reqs');
-      } else if (msg === 'synced') {
-        clearTimeout(t);
-        setup(user, ws);
-      } else {
-        ws.rel({
-          t: +new Date
-        });
-      }
-    });
-  }
-  //client says we've finished timesync, get rolling
+  var i = 0;
+  var t = setTimeout(function() {
+    ws.close('ur 2 slow');
+  }, 5000);
+  ws.onmessage(function(msg) {
+    if (i++ >= 100) {
+      ws.close('too many time reqs');
+    } else if (msg === 'synced') {
+      clearTimeout(t);
+      setup(user, ws);
+    } else {
+      ws.rel({
+        t: +new Date
+      });
+    }
+  });
+}
+
+//client says we've finished timesync, get rolling
 function setup(user, ws) {
   ws.onmessage(function() {}); //TODO client input handling
   ws.onclose(function(e) {
