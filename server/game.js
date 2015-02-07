@@ -12,6 +12,7 @@ var sysid,
 
 var timer = require('./looptimer.js'),
   phys = require('../shared/phys.js')(THREE, step),
+  mans = {},//our managers fill this in with references to themselves
   charman = require('./charman.js'),
   userman = require('./userman.js'),
   entman = require('./entman.js');
@@ -27,9 +28,14 @@ module.exports = function(debug_, knex_, rdcl_, sysname_, feed_) {
 
   return knex('systems').select('id').where('name', sysname).then(function(row) {
     sysid = row[0].id;
-    charman = charman(debug, knex, sysname, sysid, {});
-    userman = userman(debug, knex, sysname, sysid, charman, {});
-    entman = entman(debug, knex, sysname, sysid, {});
+    //to reduce redundancy in handing arguments
+    function mancall(man) {
+      return man(debug, knex, sysname, sysid, mans, {});
+    }
+    //this order is required because userman depends on charman
+    charman = mancall(charman);
+    userman = mancall(userman);
+    entman = mancall(entman);
     return entman.loadall();
   }).then(function() {
     timer(debug, feed, loop);

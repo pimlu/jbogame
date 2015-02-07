@@ -1,3 +1,4 @@
+//TODO probably change name because man is literal here... lol
 var
   config = require('../config.js'),
   Promise = require('bluebird'),

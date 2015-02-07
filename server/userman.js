@@ -8,8 +8,19 @@ var CONNECTING = 0,
   OPEN = 1,
   CLOSING = 2,
   CLOSED = 3;
-module.exports = function(debug, knex, sysname, sysid, charman, users) {
+module.exports = function(debug, knex, sysname, sysid, mans, users) {
+
+  var userman = mans.userman = {
+    users: users,
+    connect: connect,
+    close: close,
+    startlog: startlog,
+    updatestate: updatestate
+  };
+
+  var charman = mans.charman;
   var chars = charman.chars;
+
   //keeping track of the state of users should be separate from
   //sending state to him
   function connect(user, ws) {
@@ -28,6 +39,8 @@ module.exports = function(debug, knex, sysname, sysid, charman, users) {
     } else {
       charman.addchar(user);
       users[user.id] = user;
+      //get rid of their pass so I can't accidentally leak it or something
+      user.pass = null;
     }
     //TODO is fresh the right way to go about this?
     user.fresh = true;
@@ -38,25 +51,31 @@ module.exports = function(debug, knex, sysname, sysid, charman, users) {
 
     user.ws = ws;
     user.state = {
-      connects:[],
-      disconnects:[]
+      connects: []
     };
 
     /*add to the list of connections so that our newly connected user learns
     about everyone else, and everyone else learns about him*/
-    var keys=Object.keys(users);
-    for(var i=0;i<keys.length;i++) {
-      var curuser=users[keys[i]];
-      user.state.connects.push(curuser);
-      if(curuser !== user) curuser.state.connects.push(user);
+    var keys = Object.keys(users);
+    for (var i = 0; i < keys.length; i++) {
+      var curuser = users[keys[i]];
+      if (user.entid !== curuser.entid) continue;
+      user.state.connects.push({
+        id: curuser.id,
+        name: curuser.name
+      });
+      if (curuser !== user) curuser.state.connects.push({
+        id: user.id,
+        name: user.name
+      });
     }
   }
 
   function close(user, code, reason) {
-    var keys=Object.keys(users);
-    for(var i=0;i<keys.length;i++) {
+    var keys = Object.keys(users);
+    for (var i = 0; i < keys.length; i++) {
       //TODO make sure pushing to user included doesn't break things
-      var curuser=users[keys[i]];
+      var curuser = users[keys[i]];
       curuser.state.disconnects.push(user);
     }
     if (user.safelog) {
@@ -112,32 +131,17 @@ module.exports = function(debug, knex, sysname, sysid, charman, users) {
   }
 
   function updateuser(user, tick, dilation) {
-    var udata={
+    var udata = {
       tick: tick,
       dil: dilation
     };
-    //tell the user about any new connections, if there is any
-    if(user.state.connects.length !== 0) {
-      var connects = user.state.connects;
-      udata.cncts = [];
-      while(connects.length !== 0) {
-        var connector = connects.pop();
-        udata.cncts.push({
-          entid: user.entid,
-          cx: user.cx,
-          cy: user.cy,
-          cz: user.cz
-        });
-      }
+    //tell the user about any new (dis)connections, if there is any
+    if (user.state.connects.length !== 0) {
+      udata.cncts = user.state.connects;
+      user.state.connects = [];
     }
     user.ws.rel(udata);
   }
 
-  return {
-    users: users,
-    connect: connect,
-    close: close,
-    startlog: startlog,
-    updatestate: updatestate
-  };
+  return userman;
 };

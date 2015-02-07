@@ -3,7 +3,15 @@ var
 
 var inspect = require('util').inspect;
 
-module.exports = function(debug, knex, sysname, sysid, ents) {
+module.exports = function(debug, knex, sysname, sysid, mans, ents) {
+
+  var entman = mans.entman = {
+    ents: ents,
+    addent: addent,
+    loadall: loadall,
+    dotick: dotick
+  };
+
   function addent(ent) {
     ents[ent.id] = ent;
     if (!('ax' in ent)) ent.ax = ent.ay = ent.az = 0;
@@ -12,7 +20,7 @@ module.exports = function(debug, knex, sysname, sysid, ents) {
       ent.rax = ent.ray = ent.raz = 0;
       ent.raw = 1;
     }
-    ent.players = {};
+    ent.chars = {};
     ent.fresh = false; //whether the buffer is updated
     ent.buffer = new ArrayBuffer(28); //placeholder length
   }
@@ -38,10 +46,5 @@ module.exports = function(debug, knex, sysname, sysid, ents) {
   function tickent(tick, dilation, ent) {
 
   }
-  return {
-    ents: ents,
-    addent: addent,
-    loadall: loadall,
-    dotick: dotick
-  };
+  return entman;
 };
