@@ -38,6 +38,8 @@ module.exports = function(debug_, knex_, rdcl_, sysname_, feed_) {
     entman = mancall(entman);
     return entman.loadall();
   }).then(function() {
+    //debug(inspect(entman.ents));
+    //debug(Object.keys(entman.ents));
     timer(debug, feed, loop);
     return connect;
   });

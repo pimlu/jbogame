@@ -12,15 +12,11 @@ module.exports = function(debug, knex, sysname, sysid, mans, chars) {
 
   function addchar(char) {
     chars[char.id] = char;
-    //debug(inspect(Object.keys(mans.entman.ents)));
-    //debug(char.entid);
-    //FIXME
-    //mans.entman.ents[char.entid].chars[char.id] = char;
+    mans.entman.addchar(char);
   }
 
   function delchar(char) {
-    //FIXME
-    //delete mans.entman.ents[char.entid].chars[char.id];
+    mans.entman.delchar(char);
     delete chars[char.id];
   }
   return charman;

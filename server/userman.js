@@ -24,6 +24,21 @@ module.exports = function(debug, knex, sysname, sysid, mans, users) {
   //keeping track of the state of users should be separate from
   //sending state to him
   function connect(user, ws) {
+
+    //TODO is fresh the right way to go about this?
+    user.fresh = true;
+
+    user.safelog = false;
+    user.timeout = null;
+    user.timeoutstamp = null;
+
+    user.ws = ws;
+    //filled with buffers of critical changes that can't be skipped
+    user.state = {
+      connects: [],
+      joins: []
+    };
+
     //they just reconnected, stop the countdown
     if (user.id in chars) {
       user = chars[user.id];
@@ -42,29 +57,22 @@ module.exports = function(debug, knex, sysname, sysid, mans, users) {
       //get rid of their pass so I can't accidentally leak it or something
       user.pass = null;
     }
-    //TODO is fresh the right way to go about this?
-    user.fresh = true;
-
-    user.safelog = false;
-    user.timeout = null;
-    user.timeoutstamp = null;
-
-    user.ws = ws;
-    user.state = {
-      connects: []
-    };
 
     /*add to the list of connections so that our newly connected user learns
     about everyone else, and everyone else learns about him*/
+    //TODO make it so that this looks at your friends list, not the ent
+    //FIXME use new broadcast system
     var keys = Object.keys(users);
     for (var i = 0; i < keys.length; i++) {
       var curuser = users[keys[i]];
       if (user.entid !== curuser.entid) continue;
       user.state.connects.push({
+        cnct: true,
         id: curuser.id,
         name: curuser.name
       });
       if (curuser !== user) curuser.state.connects.push({
+        cnct: true,
         id: user.id,
         name: user.name
       });
@@ -74,9 +82,12 @@ module.exports = function(debug, knex, sysname, sysid, mans, users) {
   function close(user, code, reason) {
     var keys = Object.keys(users);
     for (var i = 0; i < keys.length; i++) {
-      //TODO make sure pushing to user included doesn't break things
       var curuser = users[keys[i]];
-      curuser.state.disconnects.push(user);
+      if (curuser !== user) curuser.state.connects.push({
+        cnct: false,
+        id: user.id,
+        name: user.name
+      });
     }
     if (user.safelog) {
       //if they quit early while safe logging
