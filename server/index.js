@@ -36,4 +36,4 @@ module.exports = function(debug, knex, id) {
     doorman = require('./doorman.js')(debug, knex, rdcl, app, system, connect);
     app.listen(port);
   });
-}
+};
