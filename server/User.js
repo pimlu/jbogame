@@ -1,6 +1,10 @@
 //WARNING: refactor not finished
-var Entity = require('./Entity.js');
-var Character = require('./Character.js');
+var config = require('../config.js'),
+  _ = require('lodash'),
+  Entity = require('./Entity.js'),
+  Character = require('./Character.js');
+
+var minupdate = config.server.cl.minupdate;
 
 module.exports = User;
 
@@ -8,7 +12,7 @@ var users = {};
 
 function User(data, ws) {
   users[data.id] = this;
-  Object.assign(this, {
+  _.assign(this, {
     //data.char will exist if data instanceof User, else data will be SQL rows
     char: data.char || new Character(data.name, Entity.ents[data.entid],
       data.cx, data.cy, data.cz),
@@ -26,6 +30,7 @@ function User(data, ws) {
       joins: []
     }
   });
+  ws.onclose(this.close.bind(this));
 }
 
 User.users = users;
@@ -53,12 +58,13 @@ User.connect = function(data, ws) {
 
   //TODO more connect types
   user.state.connects.push({
-    cnct:true,
-    id:user.id,
-    name:user.name
+    cnct: true,
+    id: user.id,
+    name: user.name
   });
 }
 
+//TODO fix calling this
 function close(user, code, reason) {
   var keys = Object.keys(users);
   for (var i = 0; i < keys.length; i++) {
@@ -95,7 +101,7 @@ function startlog(user, safe) {
   }, 15e3);
 }
 
-function updatestate(tick, dilation) {
+User.updatestate = function(tick, dilation) {
   if (tick % minupdate !== 0) return;
 
   /*using a for-in loop on an object in hashtable mode will cause function
@@ -106,8 +112,8 @@ function updatestate(tick, dilation) {
     var user = users[keys[i]];
     //if they're not connected, skip
     if (!user.ws.isopen()) continue;
-    if (user.fresh) filluser(user, tick, dilation);
-    updateuser(user, tick, dilation);
+    if (user.fresh) user.fill(tick, dilation);
+    user.update(tick, dilation);
   }
 }
 

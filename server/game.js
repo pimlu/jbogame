@@ -12,10 +12,9 @@ var sysid,
 
 var timer = require('./looptimer.js'),
   phys = require('../shared/phys.js')(THREE, step),
-  mans = {},//our managers fill this in with references to themselves
-  charman = require('./charman.js'),
-  userman = require('./userman.js'),
-  entman = require('./entman.js');
+  Character = require('./Character.js'),
+  User = require('./User.js'),
+  Entity = require('./Entity.js');
 
 var debug, knex, rdcl, feed;
 
@@ -28,18 +27,17 @@ module.exports = function(debug_, knex_, rdcl_, sysname_, feed_) {
 
   return knex('systems').select('id').where('name', sysname).then(function(row) {
     sysid = row[0].id;
-    //to reduce redundancy in handing arguments
-    function mancall(man) {
-      return man(debug, knex, sysname, sysid, mans, {});
-    }
-    //this order is required because userman depends on charman
-    charman = mancall(charman);
-    userman = mancall(userman);
-    entman = mancall(entman);
-    return entman.loadall();
+    var req = {
+      debug: debug,
+      knex: knex,
+      name: sysname,
+      id: sysid
+    };
+    Character.req = User.req = Entity.req = req;
+    return Entity.loadall();
   }).then(function() {
-    //debug(inspect(entman.ents));
-    //debug(Object.keys(entman.ents));
+    //debug(inspect(Entity.ents));
+    //debug(Object.keys(Entity.ents));
     timer(debug, feed, loop);
     return connect;
   });
@@ -68,11 +66,12 @@ function connect(user, ws) {
 //client says we've finished timesync, get rolling
 function setup(user, ws) {
   ws.onmessage(function() {}); //TODO client input handling
-  ws.onclose(function(e) {
-    close(user, e.code, e.reason);
-  });
+  //ws.onclose(function(e) {
+  //  close(user, e.code, e.reason);
+  //});
   debug.dbg('user', inspect(user));
-  userman.connect(user, ws);
+  User.connect(user, ws);
+  //userman.connect(user, ws);
 
   setTimeout(function() {
     ws.close(4001, 'idle');
@@ -86,6 +85,6 @@ function close(user, code, reason) {
 
 //actual game logic in here
 function loop(tick, dilation) {
-  entman.dotick(tick, dilation);
-  userman.updatestate(tick, dilation);
+  Entity.dotick(tick, dilation);
+  User.updatestate(tick, dilation);
 }
