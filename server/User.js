@@ -1,6 +1,7 @@
 //WARNING: refactor not finished
 var config = require('../config.js'),
   _ = require('lodash'),
+  inspect = require('util').inspect,
   Entity = require('./Entity.js'),
   Character = require('./Character.js');
 
@@ -64,43 +65,6 @@ User.connect = function(data, ws) {
   });
 }
 
-//TODO fix calling this
-function close(user, code, reason) {
-  var keys = Object.keys(users);
-  for (var i = 0; i < keys.length; i++) {
-    var curuser = users[keys[i]];
-    if (curuser !== user) curuser.state.connects.push({
-      cnct: false,
-      id: user.id,
-      name: user.name
-    });
-  }
-  if (user.safelog) {
-    //if they quit early while safe logging
-    if (user.timeout !== null) {
-      startlog(user, false);
-    }
-  } else {
-    startlog(user, false);
-  }
-}
-
-function startlog(user, safe) {
-  debug.dbg('start %s %s', user.id, safe);
-  //if safe, they're still connected.  else their ws died
-  if (safe) user.safelog = true;
-  user.timeoutstamp = (+new Date) + 15e3;
-  user.timeout = setTimeout(function() {
-    debug.dbg('finish %s', user.id, safe);
-    user.timeout = null;
-    //well, they're safe now
-    user.safelog = true;
-    if (user.ws.isopen()) user.ws.close(4002);
-    charman.delchar(user);
-    delete users[user.id];
-  }, 15e3);
-}
-
 User.updatestate = function(tick, dilation) {
   if (tick % minupdate !== 0) return;
 
@@ -117,16 +81,17 @@ User.updatestate = function(tick, dilation) {
   }
 }
 
-User.prototype = Object.create(Character.prototype, {
+User.prototype = Object.create(Character.prototype);
+_.assign(User.prototype, {
 
   fill: function(tick, dilation) {
-    user.fresh = false;
+    this.fresh = false;
     var udata = {
       lastplayed: 0
     };
-    if (user.lastplayed) udata.lastplayed = user.lastplayed = +user.lastplayed;
-    debug.dbg('sending udata', inspect(udata));
-    user.ws.rel(udata);
+    if (this.lastplayed) udata.lastplayed = this.lastplayed = +this.lastplayed;
+    User.req.debug.dbg('sending udata', inspect(udata));
+    this.ws.rel(udata);
   },
 
   update: function(tick, dilation) {
@@ -140,5 +105,43 @@ User.prototype = Object.create(Character.prototype, {
       this.state.connects = [];
     }
     this.ws.rel(udata);
+  },
+
+  close: function(code, reason) {
+    var keys = Object.keys(users);
+    for (var i = 0; i < keys.length; i++) {
+      var curuser = users[keys[i]];
+      if (curuser !== this) curuser.state.connects.push({
+        cnct: false,
+        id: this.id,
+        name: this.name
+      });
+    }
+    if (this.logstatus.safelog) {
+      //if they quit early while safe logging
+      if (this.timeout !== null) {
+        this.startlog(false);
+      }
+    } else {
+      this.startlog(false);
+    }
+  },
+
+  startlog: function(safe) {
+    //TODO better debug referencing system
+    User.req.debug.dbg('start %s %s', this.id, safe);
+    var ls = this.logstatus;
+    //if safe, they're still connected.  else their ws died
+    if (safe) ls.safelog = true;
+    ls.timeoutstamp = (+new Date) + 15e3;
+    ls.timeout = setTimeout(function() {
+      User.req.debug.dbg('finish %s', this.id, safe);
+      ls.timeout = null;
+      //well, they're safe now
+      ls.safelog = true;
+      if (this.ws.isopen()) this.ws.close(4002);
+      //TODO ent deletion handling
+      delete users[this.id];
+    }.bind(this), 15e3);
   }
 });
