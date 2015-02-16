@@ -1,4 +1,3 @@
-//WARNING: refactor not finished
 var config = require('../config.js'),
   _ = require('lodash'),
   inspect = require('util').inspect,
@@ -107,6 +106,8 @@ _.assign(User.prototype, {
     this.ws.rel(udata);
   },
 
+  //called when a user's websocket is closed. doesn't imply deletion of
+  //the user/character- it sets a timeout instead with startlog
   close: function(code, reason) {
     var keys = Object.keys(users);
     for (var i = 0; i < keys.length; i++) {
@@ -141,6 +142,7 @@ _.assign(User.prototype, {
       ls.safelog = true;
       if (this.ws.isopen()) this.ws.close(4002);
       //TODO ent deletion handling
+      this.char.del();
       delete users[this.id];
     }.bind(this), 15e3);
   }

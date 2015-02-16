@@ -1,3 +1,4 @@
+//TODO separate config into files and rename this to common.js
 var fs=require('fs'),
   path=require('path'),
   Promise=require('bluebird');

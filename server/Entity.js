@@ -47,11 +47,13 @@ Entity.prototype = {
 
   //pushes a message to all chars inside an ent
   //arr is the key to whatever message buffer is needed
-  //TODO system of ignoring non-users
   broadcast: function(arr, msg) {
     var keys = Object.keys(this.chars);
     for (var i = 0; i < keys.length; i++) {
-      this.chars[keys[i]].state[arr].push(msg);
+      var char=this.chars[keys[i]];
+      //skip non-users (all users have numeric IDs)
+      if(isNaN(char.id)) continue;
+      char.state[arr].push(msg);
     }
   },
 
