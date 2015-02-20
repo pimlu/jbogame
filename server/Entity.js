@@ -51,9 +51,8 @@ Entity.prototype = {
     var keys = Object.keys(this.chars);
     for (var i = 0; i < keys.length; i++) {
       var char=this.chars[keys[i]];
-      //skip non-users (all users have numeric IDs)
-      if(isNaN(char.id)) continue;
-      char.state[arr].push(msg);
+      if(!char.user) continue;
+      char.user.state[arr].push(msg);
     }
   },
 
@@ -61,19 +60,19 @@ Entity.prototype = {
   addchar: function(char) {
     this.chars[char.id] = char;
     //tell everyone a new char has joined
-    broadcast(ent, 'joins', {
+    this.broadcast('joins', {
       join: true,
       id: char.id
     });
   },
 
   delchar: function(char) {
-    delete this.chars[char.id];
     //tell everyone a char has left
     this.broadcast('joins', {
       join: false,
       id: char.id
     });
+    delete this.chars[char.id];
   },
 
   tick: function(tick, dilation) {

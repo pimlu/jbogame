@@ -6,18 +6,19 @@ var config = require('../config.js'),
 module.exports = Character;
 
 
-function Character(id, ent, x, y, z) {
+function Character(id, ent, x, y, z, user) {
   this.id = id;
   this.ent = ent;
-  ent.chars[id] = this;
   this.x = x;
   this.y = y;
   this.z = z;
+  this.user = user || null;
+  ent.addchar(this);
 }
 
 Character.prototype = {
   del: function() {
-    delete this.ent.chars[this.id];
+    this.ent.delchar(this);
   },
   //doesn't refer to del because special logic may happen when a char is
   //legitimately destroyed

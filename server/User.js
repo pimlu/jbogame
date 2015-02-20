@@ -14,8 +14,7 @@ function User(data, ws) {
   users[data.id] = this;
   _.assign(this, {
     //data.char will exist if data instanceof User, else data will be SQL rows
-    char: data.char || new Character(data.name, Entity.ents[data.entid],
-      data.cx, data.cy, data.cz),
+    char: data.char || null,
     id: data.id,
     name: data.name,
     ws: ws,
@@ -30,6 +29,10 @@ function User(data, ws) {
       joins: []
     }
   });
+
+  this.char = this.char || new Character(data.name, Entity.ents[data.entid],
+    data.cx, data.cy, data.cz, this);
+
   ws.onclose(this.close.bind(this));
 }
 
@@ -41,7 +44,7 @@ User.connect = function(data, ws) {
 
   //they just reconnected, stop the countdown
   if (data.id in users) {
-    olduser = chars[data.id];
+    olduser = users[data.id];
     clearTimeout(olduser.logstatus.timeout);
     //if, on the contrary, they are still connected, sack the old one
     if (olduser.ws.isopen()) {
@@ -55,13 +58,8 @@ User.connect = function(data, ws) {
   } else {
     user = new User(data, ws);
   }
-
-  //TODO more connect types
-  user.state.connects.push({
-    cnct: true,
-    id: user.id,
-    name: user.name
-  });
+  //FIXME only tells self, close tells all
+  user.pushcnct(true, user);
 }
 
 User.updatestate = function(tick, dilation) {
@@ -83,6 +81,14 @@ User.updatestate = function(tick, dilation) {
 User.prototype = Object.create(Character.prototype);
 _.assign(User.prototype, {
 
+  pushcnct: function(bool, user) {
+    this.state.connects.push({
+      cnct: bool,
+      id: user.id,
+      name: user.name
+    });
+  },
+
   fill: function(tick, dilation) {
     this.fresh = false;
     var udata = {
@@ -98,11 +104,17 @@ _.assign(User.prototype, {
       tick: tick,
       dil: dilation
     };
-    //tell the user about any new (dis)connections, if there is any
-    if (this.state.connects.length !== 0) {
-      udata.cncts = this.state.connects;
-      this.state.connects = [];
+
+    //report all pushed information of every category
+    var lists = ['connects', 'joins'];
+    for (var i = 0; i < lists.length; i++) {
+      var key = lists[i];
+      if (this.state[key].length !== 0) {
+        udata[key] = this.state[key];
+        this.state[key] = [];
+      }
     }
+
     this.ws.rel(udata);
   },
 
@@ -110,13 +122,10 @@ _.assign(User.prototype, {
   //the user/character- it sets a timeout instead with startlog
   close: function(code, reason) {
     var keys = Object.keys(users);
+    //TODO indiscriminately notifies all users
     for (var i = 0; i < keys.length; i++) {
       var curuser = users[keys[i]];
-      if (curuser !== this) curuser.state.connects.push({
-        cnct: false,
-        id: this.id,
-        name: this.name
-      });
+      if (curuser !== this) curuser.pushcnct(false, this);
     }
     if (this.logstatus.safelog) {
       //if they quit early while safe logging

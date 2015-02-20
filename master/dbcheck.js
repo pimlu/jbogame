@@ -109,6 +109,7 @@ module.exports = function(debug, knex) {
         foreign(t, 'ents');
         //character coordinates
         euler(t, 'c');
+        euler(t, 'r');
       }
     }
   ];
